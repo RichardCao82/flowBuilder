@@ -33,6 +33,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let availableModuleParameters = []; // 从 modules_parameter.json 加载的模块参数定义
 
+    // 动态获取应用的基路径，以适应 GitHub Pages 的子目录部署
+    function getBasePath() {
+        const path = window.location.pathname;
+        const base = path.substring(0, path.lastIndexOf('/'));
+        return base === '' ? '' : base;
+    }
+
+    const basePath = getBasePath();
+
     // 为了在 flowCanvas 内部绘制 SVG 线条，我们需要一个 SVG 元素
     // 这里我们将 SVG 元素直接作为 flowCanvasInner 的第一个子元素，这样可以确保它在所有节点之下
     const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -220,8 +229,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Attempting to load modules.json and modules_parameter.json...');
         try {
             const [modulesResponse, paramsResponse] = await Promise.all([
-                fetch('data/modules.json'),
-                fetch('data/modules_parameter.json')
+                fetch(`${basePath}/data/modules.json`),
+                fetch(`${basePath}/data/modules_parameter.json`)
             ]);
 
             if (!modulesResponse.ok) {
