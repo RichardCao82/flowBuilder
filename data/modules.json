@@ -313,6 +313,7 @@
 			"ardApp": "",
 			"iosProfile": "%apsthome%/function_test/CRTC_IOS Default.zip",
 			"ardProfile": "",
+      "stopAndWaitUserResponse": "false",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "60",
@@ -391,7 +392,8 @@
 		"description": "ask user do something.",
 		"input": {
 			"actionKey": "action_remove_simcard",
-			"+actionKey": "action_remove_simcard, action_remove_sdcard, action_remove_esim, action_close_tray",
+			"_actionKey": "action_remove_simcard, action_remove_sdcard, action_remove_esim, action_close_tray",
+      "stopAndWaitUserResponse": "true",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "600",

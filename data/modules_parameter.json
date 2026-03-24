@@ -450,6 +450,20 @@
 				"type": "Text",
 				"default": "%apsthome%/function_test/CRTC_ANDROID Default.zip"
 			},
+            "stopAndWaitUserResponse": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "true",
+						"label": "stop and wait user response"
+					},
+					{
+						"value": "false",
+						"label": "do not stop and wait user response"
+					}
+				],
+				"default": "false"
+			},
 			"retryTimeWhenFail": {
 				"type": "Text",
 				"default": "1"
@@ -565,6 +579,20 @@
 				],
 				"default": "action_remove_simcard",
 				"_comment": "will add more key in here"
+			},
+            "stopAndWaitUserResponse": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "true",
+						"label": "stop and wait user response"
+					},
+					{
+						"value": "false",
+						"label": "do not stop and wait user response"
+					}
+				],
+				"default": "true"
 			},
 			"retryTimeWhenFail": {
 				"type": "Text",
