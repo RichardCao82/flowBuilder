@@ -220,8 +220,8 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log('Attempting to load modules.json and modules_parameter.json...');
         try {
             const [modulesResponse, paramsResponse] = await Promise.all([
-                fetch('/data/modules.json'),
-                fetch('/data/modules_parameter.json')
+                fetch('./data/modules.json'),
+                fetch('./data/modules_parameter.json')
             ]);
 
             if (!modulesResponse.ok) {
