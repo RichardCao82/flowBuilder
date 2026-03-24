@@ -1,0 +1,678 @@
+[
+	{
+		"moduleName": "manualInput",
+		"description": "A UI window pops up, prompting the user to enter data.",
+		"input": {
+			"manualInputKey": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "1",
+						"label": "a"
+					},
+					{
+						"value": "2",
+						"label": "b"
+					}
+				],
+				"default": "",
+				"comment": "Jet will provide the full list"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "600"
+			}
+		}
+	},
+	{
+		"moduleName": "checkBatteryLevel",
+		"description": "A UI window pops up, prompting the user to enter data.",
+		"input": {
+			"batteryTargetLevel": {
+				"type": "Text",
+				"default": "30"
+			},
+			"batteryChargeTime": {
+				"type": "Text",
+				"default": "600"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "700"
+			}
+		}
+	},
+	{
+		"moduleName": "condition",
+		"description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+		"input": {
+			"condition": [
+				{
+					"case0": {
+						"op": "AND",
+						"items": [
+							{
+								"op": "EQ",
+								"field": "a",
+								"value": "1"
+							},
+							{
+								"op": "NEQ",
+								"field": "b",
+								"value": "1"
+							},
+							{
+								"op": "GT",
+								"field": "c",
+								"value": "1"
+							},
+							{
+								"op": "LT",
+								"field": "d",
+								"value": "1"
+							},
+							{
+								"op": "OR",
+								"items": [
+									{
+										"op": "EQ",
+										"field": "b",
+										"value": "2"
+									},
+									{
+										"op": "NOT",
+										"field": "f",
+										"value": "3"
+									}
+								]
+							}
+						]
+					}
+				}
+			],
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "60"
+			},
+			"comment": "Jet will provide the full key list"
+		}
+	},
+	{
+		"moduleName": "fastClean",
+		"description": "fastClean Device.",
+		"input": {
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "600"
+			}
+		}
+	},
+	{
+		"moduleName": "readFMI",
+		"description": "Check if the equipment is lock by FMI.",
+		"input": {
+			"checkMethod": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "device",
+						"label": "get FMI info from device"
+					},
+					{
+						"value": "forensic",
+						"label": "get FMI info from forensic"
+					},
+					{
+						"value": "prolog",
+						"label": "get FMI info from prolog"
+					},
+					{
+						"value": "ecoATM",
+						"label": "get FMI info from ecoATM"
+					}
+				],
+				"default": "device"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "readDEP",
+		"description": "Check if the equipment is lock by DEP.",
+		"input": {
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "readComponents",
+		"description": "Read the iOS components info",
+		"input": {
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "600"
+			}
+		}
+	},
+	{
+		"moduleName": "readFMMFRPKME",
+		"description": "Check if the equipment is LOCKED by FMM,FRP,KME.",
+		"input": {
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "dataCheck",
+		"description": "Check if the equipment is clean.",
+		"input": {
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "checkBatteryHealth",
+		"description": "Check the health of the device's battery.",
+		"input": {
+			"iOSParam": {
+				"default": {
+					"batterycheckmethod": "both",
+					"batteryratio": "80",
+					"batterycyclecount": "1000"
+				},
+				"customize": {
+					"iPhone1,1": {
+						"batterycheckmethod": "batterycyclecount",
+						"batteryratio": "70",
+						"batterycyclecount": "600"
+					},
+					"iPhone3,1": {
+						"batterycheckmethod": "batteryratio",
+						"batteryratio": "70",
+						"batterycyclecount": "600"
+					}
+				}
+			},
+			"androidParam": {
+				"default": "Unknown",
+				"1": "Unknown",
+				"2": "Healthy",
+				"3": "Poor",
+				"4": "Poor",
+				"5": "Poor",
+				"6": "Unknown",
+				"7": "Poor"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "readSIMLock",
+		"description": "Query server for SIM LOCK info.",
+		"input": {
+			"checkMethod": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "forensic",
+						"label": "get SIM Lock info from forensic"
+					},
+					{
+						"value": "prolog",
+						"label": "get SIM Lock info from prolog"
+					},
+					{
+						"value": "ecoATM",
+						"label": "get SIM Lock info from ecoATM"
+					}
+				],
+				"default": "forensic"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "readStolen",
+		"description": "Query server for stolen info.",
+		"input": {
+			"checkMethod": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "recipe",
+						"label": "get stolen info from recipe"
+					},
+					{
+						"value": "GSMA",
+						"label": "get stolen info from GSMA"
+					}
+				],
+				"default": "recipe"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "queryDeviceFinancialStatus",
+		"description": "Query server for device financial status.",
+		"input": {
+			"checkMethod": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "prolog",
+						"label": "get device financial status info from prolog"
+					},
+					{
+						"value": "ecoATM",
+						"label": "get device financial status info from ecoATM"
+					}
+				],
+				"default": "prolog"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "functionTest",
+		"description": "functionTest feature.",
+		"input": {
+			"sendFTResultOverWifi": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "true",
+						"label": "send FT result over wifi"
+					},
+					{
+						"value": "false",
+						"label": "do not send FT result over wifi"
+					}
+				],
+				"default": "false"
+			},
+			"additionalTestFile": {
+				"type": "Text",
+				"default": ""
+			},
+			"app_profileComeFromMakeModel": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "true",
+						"label": "get app profile come from make model"
+					},
+					{
+						"value": "false",
+						"label": "get app profile come from flow parameter"
+					}
+				],
+				"default": "false"
+			},
+			"iosApp": {
+				"type": "Text",
+				"default": "%apsthome%/function_test/FunctionTestApp/ios/FunctionTest.ipa"
+			},
+			"ardApp": {
+				"type": "Text",
+				"default": "%apsthome%/function_test/FunctionTestApp/android/FunctionTest.apk"
+			},
+			"iosProfile": {
+				"type": "Text",
+				"default": "%apsthome%/function_test/CRTC_IOS Default.zip"
+			},
+			"ardProfile": {
+				"type": "Text",
+				"default": "%apsthome%/function_test/CRTC_ANDROID Default.zip"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "600"
+			}
+		}
+	},
+	{
+		"moduleName": "installWifiProfile",
+		"description": "install wifi prfile feature.",
+		"input": {
+			"wifiProfileFiles": {
+				"type": "Text",
+				"default": "%apsthome%/3Party/wifi/RADI_UFO_8.zip,%apsthome%/3Party/wifi/RADI_UFO_10.zip"
+			},
+			"wifiProfileFolder": {
+				"type": "Text",
+				"default": ""
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			},
+			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+		}
+	},
+	{
+		"moduleName": "installApps",
+		"description": "install apps feature.",
+		"input": {
+			"appsFiles": {
+				"type": "Text",
+				"default": "%apsthome%/3Party/apps/ios/radi.ipa,%apsthome%/3Party/apps/ios/abc.apk"
+			},
+			"appsFolder": {
+				"type": "Text",
+				"default": ""
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "runExes",
+		"description": "run exe feature.",
+		"input": {
+			"exes": {
+				"type": "Text",
+				"default": "%apsthome%/3party/exes/fdInstallApp.exe -deviceos=Apple -label=%label% -udid=%udid%"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "300"
+			}
+		}
+	},
+	{
+		"moduleName": "userAction",
+		"description": "ask user do something.",
+		"input": {
+			"actionKey": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "action_remove_simcard",
+						"label": "remove sim card"
+					},
+					{
+						"value": "action_remove_sdcard",
+						"label": "remove sd card"
+					},
+					{
+						"value": "action_remove_esim",
+						"label": "remove esim"
+					},
+					{
+						"value": "action_close_tray",
+						"label": "close tray"
+					}
+				],
+				"default": "action_remove_simcard",
+				"_comment": "will add more key in here"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "600"
+			}
+		}
+	},
+	{
+		"moduleName": "deepClean",
+		"description": "install apps feature.",
+		"input": {
+			"deepCleanMethodName": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "OneTime_Rdm",
+						"label": "OneTime_Rdm"
+					}
+				],
+				"default": "OneTime_Rdm"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "1800"
+			}
+		}
+	},
+	{
+		"moduleName": "refurbish",
+		"description": "refurbish device.",
+		"input": {
+			"customizeIpsw": {
+				"ipswFolder": "",
+				"customizeIpsw": {}
+			},
+			"_customizeIpswSample": {
+				"ipswFolder": "c:/dmg",
+				"customizeIpsw": {
+					"iPhone14,2": {
+						"ipsw": "iPhone14,2_15.1.1_19B81_Restore.ipsw",
+						"dmg": "018-98872-002.dmg"
+					},
+					"iPhone14,3": {
+						"ipsw": "iPhone14,3_15.1.1_19B81_Restore.ipsw",
+						"dmg": "018-98883-002.dmg"
+					}
+				}
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "1800"
+			}
+		}
+	},
+	{
+		"moduleName": "powerDevice",
+		"description": "power off device.",
+		"input": {
+			"method": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "powerOff",
+						"label": "powerOff"
+					},
+					{
+						"value": "reboot",
+						"label": "reboot"
+					}
+				],
+				"default": "powerOff"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	}
+]

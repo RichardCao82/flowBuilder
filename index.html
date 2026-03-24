@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>流程图构建器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="left-panel">
+            <h2>模块列表</h2>
+            <div id="modules-palette" class="modules-palette">
+                <!-- 模块图标将在这里动态加载 -->
+            </div>
+        </div>
+
+        <div class="middle-panel">
+            <div class="toolbar">
+                <button id="zoom-in">+</button>
+                <button id="zoom-out">-</button>
+            </div>
+            <div id="flow-canvas" class="flow-canvas" dropzone="true">
+                <div id="flow-canvas-inner" class="flow-canvas-inner">
+                    <!-- 拖放的模块将在这里 -->
+                </div>
+            </div>
+        </div>
+
+        <div class="right-panel">
+            <h2>模块详情</h2>
+            <div id="module-details" class="module-details">
+                <p>点击画布上的模块查看详情。</p>
+                <!-- 模块的详细信息和编辑表单将在这里 -->
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <button id="save-flow">保存流程</button>
+        <button id="load-flow-btn">加载流程</button>
+        <input type="file" id="load-flow-input" accept=".json" style="display: none;">
+        <div id="save-output" class="save-output">
+            <!-- 保存的JSON将在这里显示 -->
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+</body>
+</html>

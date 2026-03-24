@@ -1,0 +1,609 @@
+{
+  "signature": "generated-1774324371224",
+  "description": "Full_Flow 流程",
+  "flowName": "Full_Flow",
+  "flowEstimationTime": "3600",
+  "flowFirstmodule": "manualInput_UserID",
+  "modules": [
+    {
+      "moduleName": "manualInput",
+      "description": "A UI window pops up, prompting the user to enter data.",
+      "input": {
+        "manualInputKey": "abc",
+        "_manualInputKey": "A list of valid keys needs to be provided to the UI.",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. Execution will resume after waiting for a UI response message."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "manualInput_UserID",
+      "x": 235,
+      "y": 52,
+      "gotoModule": {
+        "0": "dataCheck_2",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "dataCheck",
+      "description": "Check if the equipment is clean.",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. Execution will resume after waiting for a UI response message."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "dataCheck_2",
+      "x": 262,
+      "y": 128,
+      "gotoModule": {
+        "0": "",
+        "others": "checkBatteryLevel_3"
+      }
+    },
+    {
+      "moduleUIName": "checkBatteryLevel_3",
+      "_moduleUIName": "The UI displays this name to the user, and it must be unique throughout the entire flow.",
+      "moduleName": "checkBatteryLevel",
+      "description": "check battery level of the device on a specific USB port",
+      "input": {
+        "batteryTargetLevel": "30",
+        "batteryChargeTime": "600",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "700",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "result_description": {
+        "0": "success, battery level reach target battery level",
+        "1": "failure, battery level is not reach target battery level - reach maximum waiting time",
+        "2": "failure, no UDID for iOS device, device may not under normal mode",
+        "3": "failure, no SN for android device",
+        "4": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "x": 237,
+      "y": 208,
+      "gotoModule": {
+        "0": "condition_checkPlatform",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "condition",
+      "description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. If none of the conditions are met, the current process will terminate immediately.",
+        "condition": [
+          {
+            "case0": {
+              "op": "",
+              "items": [],
+              "field": "DeviceType",
+              "value": "iOS"
+            }
+          }
+        ]
+      },
+      "moduleUIName": "condition_checkPlatform",
+      "x": 218,
+      "y": 289,
+      "gotoModule": {
+        "case0": "readFMI_5",
+        "others": "readFMMFRPKME_9"
+      }
+    },
+    {
+      "moduleName": "readFMI",
+      "description": "Check if the equipment is lock by FMI.",
+      "input": {
+        "checkMethod": "device",
+        "_checkMethod": "device, forensic, prolog, ecoATM",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. This device method may activate it."
+      },
+      "_result_description": {
+        "0": "success, get FMI info",
+        "1": "failure, do not get FMI info",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "readFMI_5",
+      "x": 251,
+      "y": 370,
+      "gotoModule": {
+        "0": "readDEP_6",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "readDEP",
+      "description": "Check if the equipment is lock by DEP.",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, get DEP info",
+        "1": "failure, do not get DEP info",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "readDEP_6",
+      "x": 251,
+      "y": 449,
+      "gotoModule": {
+        "0": "readComponents_7",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "readComponents",
+      "description": "Read the iOS components info",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "600",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, get DEP info",
+        "1": "failure, do not get DEP info",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "readComponents_7",
+      "x": 222,
+      "y": 531,
+      "gotoModule": {
+        "0": "fastClean_8",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "fastClean",
+      "description": "fastClean Device.",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "fastClean_8",
+      "x": 247,
+      "y": 611,
+      "gotoModule": {
+        "0": "checkBatteryHealth_10",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "readFMMFRPKME",
+      "description": "Check if the equipment is LOCKED by FMM,FRP,KME.",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, get lock info success",
+        "1": "failure, get lock info failure",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "readFMMFRPKME_9",
+      "x": 452,
+      "y": 367,
+      "gotoModule": {
+        "0": "checkBatteryHealth_10",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "checkBatteryHealth",
+      "description": "Check the health of the device's battery.",
+      "input": {
+        "iOSParam": {
+          "default": {
+            "batterycheckmethod": "both",
+            "batteryratio": "80",
+            "batterycyclecount": "1000"
+          },
+          "customize": {
+            "iPhone1,1": {
+              "batterycheckmethod": "batterycyclecount",
+              "batteryratio": "70",
+              "batterycyclecount": "600"
+            },
+            "iPhone3,1": {
+              "batterycheckmethod": "batteryratio",
+              "batteryratio": "70",
+              "batterycyclecount": "600"
+            }
+          }
+        },
+        "androidParam": {
+          "1": "Unknown",
+          "2": "Healthy",
+          "3": "Poor",
+          "4": "Poor",
+          "5": "Poor",
+          "6": "Unknown",
+          "7": "Poor",
+          "default": "Unknown"
+        },
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "checkBatteryHealth_10",
+      "x": 404,
+      "y": 675,
+      "gotoModule": {
+        "0": "readSIMLock_11",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "readSIMLock",
+      "description": "Query server for SIM LOCK info.",
+      "input": {
+        "checkMethod": "forensic",
+        "_checkMethod": "forensic, prolog, ecoATM",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "readSIMLock_11",
+      "x": 733,
+      "y": 138,
+      "gotoModule": {
+        "0": "readStolen_12",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "readStolen",
+      "description": "Query server for stolen info.",
+      "input": {
+        "checkMethod": "recipe",
+        "_checkMethod": "recipe, GSMA",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "readStolen_12",
+      "x": 742,
+      "y": 237,
+      "gotoModule": {
+        "0": "queryDeviceFinancialStatus_13",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "queryDeviceFinancialStatus",
+      "description": "Query server for device financial status.",
+      "input": {
+        "checkMethod": "prolog",
+        "_checkMethod": "prolog, ecoATM",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "queryDeviceFinancialStatus_13",
+      "x": 695,
+      "y": 315,
+      "gotoModule": {
+        "0": "functionTest_14",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "functionTest",
+      "description": "functionTest feature.",
+      "input": {
+        "sendFTResultOverWifi": "true",
+        "additionalTestFile": "",
+        "app_profileComeFromMakeModel": "false",
+        "iosApp": "%apsthome%/function_test/FunctionTestApp/ios/FunctionTest.ipa",
+        "ardApp": "",
+        "iosProfile": "%apsthome%/function_test/CRTC_IOS Default.zip",
+        "ardProfile": "",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "functionTest_14",
+      "x": 733,
+      "y": 395,
+      "gotoModule": {
+        "0": "installWifiProfile_15",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "installWifiProfile",
+      "description": "install wifi prfile feature.",
+      "input": {
+        "wifiProfileFiles": [
+          "%apsthome%/3Party/wifi/RADI_UFO_8.zip",
+          "%apsthome%/3Party/wifi/RADI_UFO_10.zip"
+        ],
+        "wifiProfileFolder": "",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "installWifiProfile_15",
+      "x": 706,
+      "y": 472,
+      "gotoModule": {
+        "0": "installApps_16",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "installApps",
+      "description": "install apps feature.",
+      "input": {
+        "appsFiles": [
+          "%apsthome%/3Party/apps/ios/radi.ipa",
+          "%apsthome%/3Party/apps/ios/abc.apk"
+        ],
+        "appsFolder": "",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. iOS will install all ipa files, android will install all apk files"
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "installApps_16",
+      "x": 711,
+      "y": 553,
+      "gotoModule": {
+        "0": "runExes_17",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "runExes",
+      "description": "install apps feature.",
+      "input": {
+        "exes": [
+          "%apsthome%/3party/exes/fdInstallApp.exe -deviceos=Apple -label=%label% -udid=%udid%"
+        ],
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "runExes_17",
+      "x": 715,
+      "y": 635,
+      "gotoModule": {
+        "0": "condition_checkSIMCard",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "condition",
+      "description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. If none of the conditions are met, the current process will terminate immediately.",
+        "condition": [
+          {
+            "case0": {
+              "op": "",
+              "items": [],
+              "field": "SimInDevice",
+              "value": "true"
+            }
+          }
+        ]
+      },
+      "moduleUIName": "condition_checkSIMCard",
+      "x": 974,
+      "y": 391,
+      "gotoModule": {
+        "case0": "userAction_removeSIMCard",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "userAction",
+      "description": "ask user do something.",
+      "input": {
+        "actionKey": "action_remove_simcard",
+        "+actionKey": "action_remove_simcard, action_remove_sdcard, action_remove_esim, action_close_tray",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "600",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "userAction_removeSIMCard",
+      "x": 961,
+      "y": 488,
+      "gotoModule": {
+        "0": "deepClean_20",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "deepClean",
+      "description": "install apps feature.",
+      "input": {
+        "deepCleanMethodName": "OneTime_Rdm",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "deepClean_20",
+      "x": 997,
+      "y": 562,
+      "gotoModule": {
+        "0": "refurbish_21",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "refurbish",
+      "description": "refurbish device.",
+      "input": {
+        "customizeIpsw": {
+          "ipswFolder": "",
+          "customizeIpsw": {}
+        },
+        "_customizeIpswSample": {
+          "ipswFolder": "c:/dmg",
+          "customizeIpsw": {
+            "iPhone14,2": {
+              "ipsw": "iPhone14,2_15.1.1_19B81_Restore.ipsw",
+              "dmg": "018-98872-002.dmg"
+            },
+            "iPhone14,3": {
+              "ipsw": "iPhone14,3_15.1.1_19B81_Restore.ipsw",
+              "dmg": "018-98883-002.dmg"
+            }
+          }
+        },
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "refurbish_21",
+      "x": 993,
+      "y": 626,
+      "gotoModule": {
+        "0": "powerDevice_22",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "powerDevice",
+      "description": "power off device.",
+      "input": {
+        "method": "powerOff",
+        "_method": "powerOff, reboot",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "_result_description": {
+        "0": "success, user input data done",
+        "1": "failure, user cancel input data",
+        "2": "failure, timeout or reach maximum retry times",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "powerDevice_22",
+      "x": 985,
+      "y": 706,
+      "gotoModule": {
+        "0": "",
+        "others": ""
+      }
+    }
+  ]
+}
