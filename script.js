@@ -856,9 +856,16 @@ document.addEventListener('DOMContentLoaded', () => {
             for (const handleType in moduleData.gotoModule) {
                 const targetModuleUIName = moduleData.gotoModule[handleType];
                 if (targetModuleUIName) {
+                    // 画布输出锚点使用 output-0 / output-others；condition JSON 里是 case0。
+                    // 加载时统一归一化，确保历史数据可以正确渲染连线。
+                    let normalizedHandleType = handleType;
+                    if (handleType === 'case0') {
+                        normalizedHandleType = '0';
+                    }
+
                     connections.push({
                         startNodeId: moduleData.id,
-                        startHandleType: handleType,
+                        startHandleType: normalizedHandleType,
                         endNodeId: targetModuleUIName
                     });
                 }
