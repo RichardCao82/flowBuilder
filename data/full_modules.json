@@ -65,76 +65,68 @@
 				"retryInterval": "5",
 				"moduleTimeout": "60",
 				"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. If none of the conditions are met, the current process will terminate immediately.",
-				"condition": [
-					{
-						"case0": {
-							"op": "EQ",
-							"field": "DeviceType",
-							"value": "iOS"
-						}
+				"conditions": {
+					"case0": {
+						"op": "EQ",
+						"field": "DeviceType",
+						"value": "iOS"
 					},
-					{
-						"case1": {
-							"op": "EQ",
-							"field": "DeviceType",
-							"value": "android"
-						}
+					"case1": {
+						"op": "EQ",
+						"field": "DeviceType",
+						"value": "android"
 					},
-					{
-						"case2": {
-							"op": "AND",
-							"items": [
-								{
-									"op": "EQ",
-									"field": "a",
-									"value": "1"
-								},
-								{
-									"op": "OR",
-									"items": [
-										{
-											"op": "EQ",
-											"field": "b",
-											"value": "2"
-										},
-										{
-											"op": "EQ",
-											"field": "b",
-											"value": "3"
-										}
-									]
-								}
-							]
-						}
+					"case2": {
+						"op": "AND",
+						"items": [
+							{
+								"op": "EQ",
+								"field": "a",
+								"value": "1"
+							},
+							{
+								"op": "OR",
+								"items": [
+									{
+										"op": "EQ",
+										"field": "b",
+										"value": "2"
+									},
+									{
+										"op": "EQ",
+										"field": "b",
+										"value": "3"
+									}
+								]
+							}
+						]
 					},
-					{
-						"case3": {
-							"op": "AND",
-							"items": [
-								{
-									"op": "NOT",
-									"field": "a",
-									"value": "4"
-								},
-								{
-									"op": "OR",
-									"items": [
-										{
-											"op": "EQ",
-											"field": "b",
-											"value": "7"
-										},
-										{
-											"op": "EQ",
-											"field": "b",
-											"value": "8"
-										}
-									]
-								}
-							]
-						}
+					"case3": {
+						"op": "AND",
+						"items": [
+							{
+								"op": "NOT",
+								"field": "a",
+								"value": "4"
+							},
+							{
+								"op": "OR",
+								"items": [
+									{
+										"op": "EQ",
+										"field": "b",
+										"value": "7"
+									},
+									{
+										"op": "EQ",
+										"field": "b",
+										"value": "8"
+									}
+								]
+							}
+						]
 					}
-				]
+				}
 			},
 			"gotoModule": {
 				"case0": "fastClean",
@@ -519,15 +511,13 @@
 				"retryInterval": "5",
 				"moduleTimeout": "60",
 				"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. If none of the conditions are met, the current process will terminate immediately.",
-				"condition": [
-					{
-						"case0": {
-							"op": "EQ",
-							"field": "SimInDevice",
-							"value": "true"
-						}
+				"conditions": {
+					"case0": {
+						"op": "EQ",
+						"field": "SimInDevice",
+						"value": "true"
 					}
-				]
+				}
 			},
 			"gotoModule": {
 				"case0": "userAction_removeSIM",

@@ -10,14 +10,23 @@ body {
 .container {
     display: flex;
     flex: 1;
+    min-height: 0;
     /* overflow: hidden; */
 }
 .left-panel, .right-panel {
     width: 200px;
     background-color: #f4f4f4;
     padding: 10px;
+    box-sizing: border-box;
     box-shadow: 2px 0 5px rgba(0,0,0,0.1);
     overflow-y: auto;
+}
+
+.left-panel {
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
 }
 
 .middle-panel {
@@ -33,6 +42,11 @@ body {
     display: flex;
     flex-direction: column;
     gap: 10px;
+    flex: 1;
+    min-height: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
 }
 
 .module-item {

@@ -1,5 +1,5 @@
 {
-  "signature": "generated-1774324371224",
+  "signature": "generated-1774408423120",
   "description": "Full_Flow 流程",
   "flowName": "Full_Flow",
   "flowEstimationTime": "3600",
@@ -89,16 +89,13 @@
         "retryInterval": "5",
         "moduleTimeout": "60",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. If none of the conditions are met, the current process will terminate immediately.",
-        "condition": [
-          {
-            "case0": {
-              "op": "",
-              "items": [],
-              "field": "DeviceType",
-              "value": "iOS"
-            }
+        "conditions": {
+          "case0": {
+            "op": "EQ",
+            "field": "DeviceType",
+            "value": "iOS"
           }
-        ]
+        }
       },
       "moduleUIName": "condition_checkPlatform",
       "x": 218,
@@ -218,8 +215,8 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "readFMMFRPKME_9",
-      "x": 452,
-      "y": 367,
+      "x": 419,
+      "y": 366,
       "gotoModule": {
         "0": "checkBatteryHealth_10",
         "others": ""
@@ -431,8 +428,8 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "installApps_16",
-      "x": 711,
-      "y": 553,
+      "x": 666,
+      "y": 548,
       "gotoModule": {
         "0": "runExes_17",
         "others": ""
@@ -457,8 +454,8 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "runExes_17",
-      "x": 715,
-      "y": 635,
+      "x": 645,
+      "y": 650,
       "gotoModule": {
         "0": "condition_checkSIMCard",
         "others": ""
@@ -472,23 +469,20 @@
         "retryInterval": "5",
         "moduleTimeout": "60",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. If none of the conditions are met, the current process will terminate immediately.",
-        "condition": [
-          {
-            "case0": {
-              "op": "",
-              "items": [],
-              "field": "SimInDevice",
-              "value": "true"
-            }
+        "conditions": {
+          "case0": {
+            "op": "EQ",
+            "field": "SimInDevice",
+            "value": "true"
           }
-        ]
+        }
       },
       "moduleUIName": "condition_checkSIMCard",
       "x": 974,
-      "y": 391,
+      "y": 390,
       "gotoModule": {
         "case0": "userAction_removeSIMCard",
-        "others": ""
+        "others": "deepClean_20"
       }
     },
     {
@@ -500,7 +494,8 @@
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
         "moduleTimeout": "600",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out).",
+        "stopAndWaitUserResponse": "true"
       },
       "_result_description": {
         "0": "success, user input data done",
@@ -509,8 +504,8 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "userAction_removeSIMCard",
-      "x": 961,
-      "y": 488,
+      "x": 944,
+      "y": 489,
       "gotoModule": {
         "0": "deepClean_20",
         "others": ""
@@ -533,8 +528,8 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "deepClean_20",
-      "x": 997,
-      "y": 562,
+      "x": 1157,
+      "y": 566,
       "gotoModule": {
         "0": "refurbish_21",
         "others": ""
@@ -573,8 +568,8 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "refurbish_21",
-      "x": 993,
-      "y": 626,
+      "x": 1099,
+      "y": 647,
       "gotoModule": {
         "0": "powerDevice_22",
         "others": ""
@@ -598,8 +593,8 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "powerDevice_22",
-      "x": 985,
-      "y": 706,
+      "x": 989,
+      "y": 724,
       "gotoModule": {
         "0": "",
         "others": ""

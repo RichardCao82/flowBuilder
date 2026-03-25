@@ -62,50 +62,48 @@
 		"moduleName": "condition",
 		"description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
 		"input": {
-			"condition": [
-				{
-					"case0": {
-						"op": "AND",
-						"items": [
-							{
-								"op": "EQ",
-								"field": "a",
-								"value": "1"
-							},
-							{
-								"op": "NEQ",
-								"field": "b",
-								"value": "1"
-							},
-							{
-								"op": "GT",
-								"field": "c",
-								"value": "1"
-							},
-							{
-								"op": "LT",
-								"field": "d",
-								"value": "1"
-							},
-							{
-								"op": "OR",
-								"items": [
-									{
-										"op": "EQ",
-										"field": "b",
-										"value": "2"
-									},
-									{
-										"op": "NOT",
-										"field": "f",
-										"value": "3"
-									}
-								]
-							}
-						]
-					}
+			"conditions": {
+				"case0": {
+					"op": "AND",
+					"items": [
+						{
+							"op": "EQ",
+							"field": "a",
+							"value": "1"
+						},
+						{
+							"op": "NEQ",
+							"field": "b",
+							"value": "1"
+						},
+						{
+							"op": "GT",
+							"field": "c",
+							"value": "1"
+						},
+						{
+							"op": "LT",
+							"field": "d",
+							"value": "1"
+						},
+						{
+							"op": "OR",
+							"items": [
+								{
+									"op": "EQ",
+									"field": "b",
+									"value": "2"
+								},
+								{
+									"op": "NOT",
+									"field": "f",
+									"value": "3"
+								}
+							]
+						}
+					]
 				}
-			],
+			},
 			"retryTimeWhenFail": {
 				"type": "Text",
 				"default": "1"

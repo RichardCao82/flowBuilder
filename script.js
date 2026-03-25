@@ -613,16 +613,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 渲染 condition 模块的 Input 编辑器 ---
     function renderConditionInput(module, container) {
-        // 初始化 module.input.condition 如果不存在，并确保它是一个包含一个 case0 对象的数组
+        // 初始化 module.input.conditions 为对象结构
         if (!module.input) module.input = {};
-        if (!module.input.condition || !Array.isArray(module.input.condition) || module.input.condition.length === 0) {
-            module.input.condition = [{ case0: { op: "", items: [] } }]; // 默认初始化为带有 items 数组的结构
-        } else if (!module.input.condition[0].case0) {
-            // 如果存在 condition 数组但第一个元素不是 case0，则修正
-            module.input.condition[0] = { case0: { op: "", items: [] } };
+        if (!module.input.conditions || typeof module.input.conditions !== 'object' || Array.isArray(module.input.conditions)) {
+            module.input.conditions = { case0: { op: "", items: [] } };
+        } else if (!module.input.conditions.case0 || typeof module.input.conditions.case0 !== 'object' || Array.isArray(module.input.conditions.case0)) {
+            module.input.conditions.case0 = { op: "", items: [] };
         }
 
-        const case0 = module.input.condition[0].case0;
+        const case0 = module.input.conditions.case0;
 
         container.innerHTML = `
             <div class="condition-input-form">
@@ -913,11 +912,23 @@ document.addEventListener('DOMContentLoaded', () => {
             // delete moduleToSave.y;
             delete moduleToSave.dataset; // 移除 dataset，因为它不是原始JSON的一部分
 
-            // 如果是 condition 模块，处理其 input.condition 和 gotoModule
+            // 如果是 condition 模块，处理其 input.conditions 和 gotoModule
             if (node.moduleName === 'condition') {
-                // 确保 input.condition 仅包含 case0 的信息
-                // 此时 node.input.condition[0].case0 应该已经通过 renderConditionInput 更新过
-                moduleToSave.input.condition = [node.input.condition[0]]; // 仅保留 case0
+                if (!moduleToSave.input || typeof moduleToSave.input !== 'object') {
+                    moduleToSave.input = {};
+                }
+                if (!node.input || typeof node.input !== 'object') {
+                    node.input = {};
+                }
+                if (!node.input.conditions || typeof node.input.conditions !== 'object' || Array.isArray(node.input.conditions)) {
+                    node.input.conditions = {};
+                }
+
+                // 当前编辑器只支持 case0，保存时强制只输出 case0
+                moduleToSave.input.conditions = {
+                    case0: node.input.conditions.case0 || { op: "", items: [] }
+                };
+                delete moduleToSave.input.condition;
 
                 // 构建 gotoModule
                 moduleToSave.gotoModule = {};

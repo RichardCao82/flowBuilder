@@ -5,7 +5,7 @@
 3. 网页的右侧，用户可以点击每个图标，查看该图标对应的module的详细信息。详细信息包括moduleName、description、input。同时可以修改moduleName、description、input。
 
 注意：
-1. 有个模块叫做condition，它的input中有个“condition”节点，用户点击拖动到中间区域的condition组件时，需要用户输入一个“与或非”条件表达式，然后生成condition模块中的样子
+1. 有个模块叫做condition，它的input中有个“conditions”节点，用户点击拖动到中间区域的condition组件时，需要用户输入一个“与或非”条件表达式，然后生成condition模块中的样子
 2. 每次用户拖入一个组件到中间区域时，给该组件生成一个唯一的名字，最后会保存时，该名字存放到该组件的moduleUIName字段中。整个flow中，moduleUIName必须是唯一的。如果用户拖入多个同样的组件，自动给新拖入的组件一个新的唯一名字，每个组件的moduleUIName必须不同。
 3. 中间区域的右上角要有放大和缩小的加号和减号的图标，用于放大和缩小该中间区域
 4. 整个屏幕的底部要有一个保存按钮，用于保存用户的流程图，生成一个类似data文件夹中full_modules.json文件的内容。保存时，需要用户输入该flow的名字。
