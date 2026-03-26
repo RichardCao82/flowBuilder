@@ -242,6 +242,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             availableModules = await modulesResponse.json();
             availableModuleParameters = await paramsResponse.json();
+            availableModules.forEach(ensureModuleSuccessCodes);
 
             console.log('Loaded modules:', availableModules);
             console.log('Loaded module parameters:', availableModuleParameters);
@@ -300,6 +301,11 @@ document.addEventListener('DOMContentLoaded', () => {
     function addNodeToCanvas(moduleData, clientX, clientY) {
         // 对 moduleData 进行深拷贝，确保每个节点实例都有独立的 input 和 gotoModule
         const newNode = JSON.parse(JSON.stringify(moduleData));
+        if (newNode.moduleName === 'condition') {
+            // condition 每次新增都由用户手动配置 input，不使用模板默认值
+            newNode.input = {};
+        }
+        ensureModuleSuccessCodes(newNode);
         newNode.moduleUIName = generateUniqueUIName(moduleData.moduleName);
         newNode.id = newNode.moduleUIName; // 使用 moduleUIName 作为 DOM ID
         
@@ -420,6 +426,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 显示模块详情 ---
     function displayModuleDetails(module) {
+        ensureModuleSuccessCodes(module);
         moduleDetails.innerHTML = `
             <h3>${module.moduleUIName}</h3>
             <label for="detail-moduleUIName">模块UI名称:</label>
@@ -430,6 +437,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
             <label for="detail-description">描述:</label>
             <textarea id="detail-description" disabled>${module.description || ''}</textarea>
+
+            <label for="detail-successCodes">成功码 (successCodes，逗号分隔):</label>
+            <input type="text" id="detail-successCodes" value="${formatSuccessCodesForDisplay(module.successCodes)}" placeholder="例如: 0,1,case0">
 
             <label>输入 (Input):</label>
             <div id="detail-input-editor" class="input-editor">
@@ -456,6 +466,11 @@ document.addEventListener('DOMContentLoaded', () => {
         // document.getElementById('detail-description').addEventListener('change', (e) => {
         //     module.description = e.target.value;
         // });
+
+        document.getElementById('detail-successCodes').addEventListener('change', (e) => {
+            module.successCodes = parseSuccessCodesFromDisplay(e.target.value, module.moduleName);
+            e.target.value = formatSuccessCodesForDisplay(module.successCodes);
+        });
 
         const inputEditor = document.getElementById('detail-input-editor');
         renderInputEditor(module, inputEditor);
@@ -742,6 +757,44 @@ document.addEventListener('DOMContentLoaded', () => {
         renderFlowNodes(); // 这会重新渲染所有节点和连接
     }
 
+    function getDefaultSuccessCodes(moduleName) {
+        return moduleName === 'condition' ? ['case0'] : ['0'];
+    }
+
+    function parseSuccessCodesFromDisplay(value, moduleName) {
+        if (Array.isArray(value)) {
+            const normalized = value
+                .map(item => String(item).trim())
+                .filter(item => item !== '');
+            return normalized.length > 0 ? normalized : getDefaultSuccessCodes(moduleName);
+        }
+
+        if (typeof value !== 'string') {
+            return getDefaultSuccessCodes(moduleName);
+        }
+
+        const parsed = value
+            .split(',')
+            .map(item => item.trim())
+            .filter(item => item !== '');
+
+        return parsed.length > 0 ? parsed : getDefaultSuccessCodes(moduleName);
+    }
+
+    function formatSuccessCodesForDisplay(successCodes) {
+        if (!Array.isArray(successCodes)) {
+            return '';
+        }
+        return successCodes.join(',');
+    }
+
+    function ensureModuleSuccessCodes(module) {
+        if (!module || typeof module !== 'object') {
+            return;
+        }
+        module.successCodes = parseSuccessCodesFromDisplay(module.successCodes, module.moduleName);
+    }
+
 
 
 
@@ -839,6 +892,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // 遍历 flowData.modules，重新构建 flowNodes
         flowData.modules.forEach(moduleData => {
+            ensureModuleSuccessCodes(moduleData);
             // 确保 moduleData 中有 moduleUIName，否则生成一个
             if (!moduleData.moduleUIName) {
                 moduleData.moduleUIName = generateUniqueUIName(moduleData.moduleName);
@@ -912,6 +966,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         flowNodes.forEach(node => {
             const moduleToSave = { ...node };
+            ensureModuleSuccessCodes(moduleToSave);
             // 清理临时属性
             delete moduleToSave.id;
             // 保留 x, y 坐标，用于加载时还原位置

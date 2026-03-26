@@ -7,16 +7,16 @@
 				"type": "Select",
 				"option": [
 					{
-						"value": "1",
-						"label": "a"
+						"value": "123",
+						"label": "abc"
 					},
 					{
-						"value": "2",
-						"label": "b"
+						"value": "456",
+						"label": "def"
 					}
 				],
-				"default": "",
-				"comment": "Jet will provide the full list"
+				"default": "123",
+				"_comment": "Jet will provide the full list"
 			},
 			"retryTimeWhenFail": {
 				"type": "Text",
@@ -91,7 +91,7 @@
 							"items": [
 								{
 									"op": "EQ",
-									"field": "b",
+									"field": "e",
 									"value": "2"
 								},
 								{
@@ -116,7 +116,7 @@
 				"type": "Text",
 				"default": "60"
 			},
-			"comment": "Jet will provide the full key list"
+			"_comment": "Jet will provide the full key list"
 		}
 	},
 	{
@@ -133,7 +133,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "600"
+				"default": "300"
 			}
 		}
 	},
@@ -173,7 +173,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "300"
 			}
 		}
 	},
@@ -191,7 +191,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "300"
 			}
 		}
 	},
@@ -227,7 +227,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "300"
 			}
 		}
 	},
@@ -245,7 +245,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "300"
 			}
 		}
 	},
@@ -292,7 +292,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "300"
 			}
 		}
 	},
@@ -328,7 +328,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "300"
 			}
 		}
 	},
@@ -360,7 +360,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "300"
 			}
 		}
 	},
@@ -392,7 +392,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "300"
 			}
 		}
 	},
@@ -418,37 +418,51 @@
 				"type": "Text",
 				"default": ""
 			},
-			"app_profileComeFromMakeModel": {
+			"appComeFrom": {
 				"type": "Select",
 				"option": [
 					{
-						"value": "true",
+						"value": "FDServer",
+						"label": "get app come from fd server"
+					},
+					{
+						"value": "ModuleParam",
+						"label": "get app come from module parameter"
+					}
+				],
+				"default": "FDServer"
+			},
+			"appProfileComeFrom": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "MakeModel",
 						"label": "get app profile come from make model"
 					},
 					{
-						"value": "false",
-						"label": "get app profile come from flow parameter"
+						"value": "ModuleParam",
+						"label": "get app profile come from module parameter"
 					}
 				],
-				"default": "false"
+				"default": "MakeModel"
 			},
 			"iosApp": {
 				"type": "Text",
-				"default": "%apsthome%/function_test/FunctionTestApp/ios/FunctionTest.ipa"
+				"default": ""
 			},
 			"ardApp": {
 				"type": "Text",
-				"default": "%apsthome%/function_test/FunctionTestApp/android/FunctionTest.apk"
+				"default": ""
 			},
 			"iosProfile": {
 				"type": "Text",
-				"default": "%apsthome%/function_test/CRTC_IOS Default.zip"
+				"default": ""
 			},
 			"ardProfile": {
 				"type": "Text",
-				"default": "%apsthome%/function_test/CRTC_ANDROID Default.zip"
+				"default": ""
 			},
-            "stopAndWaitUserResponse": {
+			"stopAndWaitUserResponse": {
 				"type": "Select",
 				"option": [
 					{
@@ -481,8 +495,8 @@
 		"description": "install wifi prfile feature.",
 		"input": {
 			"wifiProfileFiles": {
-				"type": "Text",
-				"default": "%apsthome%/3Party/wifi/RADI_UFO_8.zip,%apsthome%/3Party/wifi/RADI_UFO_10.zip"
+				"type": "Array",
+				"default": ""
 			},
 			"wifiProfileFolder": {
 				"type": "Text",
@@ -498,9 +512,8 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
-			},
-			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+				"default": "240"
+			}
 		}
 	},
 	{
@@ -508,8 +521,8 @@
 		"description": "install apps feature.",
 		"input": {
 			"appsFiles": {
-				"type": "Text",
-				"default": "%apsthome%/3Party/apps/ios/radi.ipa,%apsthome%/3Party/apps/ios/abc.apk"
+				"type": "Array",
+				"default": ""
 			},
 			"appsFolder": {
 				"type": "Text",
@@ -525,7 +538,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "180"
+				"default": "240"
 			}
 		}
 	},
@@ -534,8 +547,8 @@
 		"description": "run exe feature.",
 		"input": {
 			"exes": {
-				"type": "Text",
-				"default": "%apsthome%/3party/exes/fdInstallApp.exe -deviceos=Apple -label=%label% -udid=%udid%"
+				"type": "Array",
+				"default": ""
 			},
 			"retryTimeWhenFail": {
 				"type": "Text",
@@ -576,9 +589,9 @@
 					}
 				],
 				"default": "action_remove_simcard",
-				"_comment": "will add more key in here"
+				"_comment": "may add more key in future"
 			},
-            "stopAndWaitUserResponse": {
+			"stopAndWaitUserResponse": {
 				"type": "Select",
 				"option": [
 					{
@@ -616,6 +629,106 @@
 					{
 						"value": "OneTime_Rdm",
 						"label": "OneTime_Rdm"
+					},
+					{
+						"value": "DoD",
+						"label": "DoD"
+					},
+					{
+						"value": "DoD7",
+						"label": "DoD7"
+					},
+					{
+						"value": "DoE",
+						"label": "DoE"
+					},
+					{
+						"value": "NSA",
+						"label": "NSA"
+					},
+					{
+						"value": "USAirForce",
+						"label": "USAirForce"
+					},
+					{
+						"value": "USArmy",
+						"label": "USArmy"
+					},
+					{
+						"value": "USNavy",
+						"label": "USNavy"
+					},
+					{
+						"value": "Canada_RCMP",
+						"label": "Canada_RCMP"
+					},
+					{
+						"value": "Canada_CSEC",
+						"label": "Canada_CSEC"
+					},
+					{
+						"value": "UK",
+						"label": "UK"
+					},
+					{
+						"value": "German",
+						"label": "German"
+					},
+					{
+						"value": "Australia",
+						"label": "Australia"
+					},
+					{
+						"value": "Australia_15",
+						"label": "Australia_15"
+					},
+					{
+						"value": "NewZealand",
+						"label": "NewZealand"
+					},
+					{
+						"value": "Russia",
+						"label": "Russia"
+					},
+					{
+						"value": "BSchneier",
+						"label": "BSchneier"
+					},
+					{
+						"value": "PGutmann",
+						"label": "PGutmann"
+					},
+					{
+						"value": "Pfitzner",
+						"label": "Pfitzner"
+					},
+					{
+						"value": "OneTime_0",
+						"label": "OneTime_0"
+					},
+					{
+						"value": "OneTime_1",
+						"label": "OneTime_1"
+					},
+					{
+						"value": "NTime_Rdm",
+						"label": "NTime_Rdm"
+					},
+					{
+						"value": "LLFormat",
+						"label": "LLFormat"
+					},
+					{
+						"value": "OPNAV",
+						"label": "OPNAV"
+					},
+					{
+						"value": "NSA130",
+						"label": "NSA130"
+					},
+					{
+						"value": "UK1",
+						"label": "UK1"
 					}
 				],
 				"default": "OneTime_Rdm"
@@ -630,7 +743,7 @@
 			},
 			"moduleTimeout": {
 				"type": "Text",
-				"default": "1800"
+				"default": "86400"
 			}
 		}
 	},
@@ -671,7 +784,7 @@
 	},
 	{
 		"moduleName": "powerDevice",
-		"description": "power off device.",
+		"description": "power device.",
 		"input": {
 			"method": {
 				"type": "Select",
@@ -687,6 +800,98 @@
 				],
 				"default": "powerOff"
 			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "activeDevice",
+		"description": "active device.",
+		"input": {
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "skipWelcome",
+		"description": "skip welcome.",
+		"input": {
+			"skipScreen": {
+				"type": "Text",
+				"default": "FFFFFFFFFFFFFFFF"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		}
+	},
+	{
+		"moduleName": "queryDMServer",
+		"description": "query DM Server.",
+		"input": {
+			"queryDMKey": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "111",
+						"label": "xyz"
+					},
+					{
+						"value": "222",
+						"label": "qwe"
+					}
+				],
+				"default": "111",
+				"_comment": "Jet will provide the full list"
+			},
+			"retryTimeWhenFail": {
+				"type": "Text",
+				"default": "1"
+			},
+			"retryInterval": {
+				"type": "Text",
+				"default": "5"
+			},
+			"moduleTimeout": {
+				"type": "Text",
+				"default": "180"
+			}
+		},
+		"_comment": "UI need to ask User input output value as output point"
+	},
+	{
+		"moduleName": "installRADI",
+		"description": "install radi.",
+		"input": {
 			"retryTimeWhenFail": {
 				"type": "Text",
 				"default": "1"

@@ -1,5 +1,5 @@
 {
-  "signature": "generated-1774408423120",
+  "signature": "generated-1774501343493",
   "description": "Full_Flow 流程",
   "flowName": "Full_Flow",
   "flowEstimationTime": "3600",
@@ -28,7 +28,10 @@
       "gotoModule": {
         "0": "dataCheck_2",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "dataCheck",
@@ -51,7 +54,10 @@
       "gotoModule": {
         "0": "",
         "others": "checkBatteryLevel_3"
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleUIName": "checkBatteryLevel_3",
@@ -79,7 +85,10 @@
       "gotoModule": {
         "0": "condition_checkPlatform",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "condition",
@@ -103,7 +112,10 @@
       "gotoModule": {
         "case0": "readFMI_5",
         "others": "readFMMFRPKME_9"
-      }
+      },
+      "successCodes": [
+        "case0"
+      ]
     },
     {
       "moduleName": "readFMI",
@@ -128,7 +140,10 @@
       "gotoModule": {
         "0": "readDEP_6",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "readDEP",
@@ -151,7 +166,10 @@
       "gotoModule": {
         "0": "readComponents_7",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "readComponents",
@@ -174,7 +192,10 @@
       "gotoModule": {
         "0": "fastClean_8",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "fastClean",
@@ -197,7 +218,10 @@
       "gotoModule": {
         "0": "checkBatteryHealth_10",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "readFMMFRPKME",
@@ -220,7 +244,10 @@
       "gotoModule": {
         "0": "checkBatteryHealth_10",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "checkBatteryHealth",
@@ -272,7 +299,10 @@
       "gotoModule": {
         "0": "readSIMLock_11",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "readSIMLock",
@@ -292,12 +322,15 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "readSIMLock_11",
-      "x": 733,
-      "y": 138,
+      "x": 616,
+      "y": 68,
       "gotoModule": {
-        "0": "readStolen_12",
+        "0": "queryDMServer_5",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "readStolen",
@@ -322,7 +355,10 @@
       "gotoModule": {
         "0": "queryDeviceFinancialStatus_13",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "queryDeviceFinancialStatus",
@@ -347,7 +383,10 @@
       "gotoModule": {
         "0": "functionTest_14",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "functionTest",
@@ -377,7 +416,10 @@
       "gotoModule": {
         "0": "installWifiProfile_15",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "installWifiProfile",
@@ -405,7 +447,10 @@
       "gotoModule": {
         "0": "installApps_16",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "installApps",
@@ -433,7 +478,10 @@
       "gotoModule": {
         "0": "runExes_17",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "runExes",
@@ -459,7 +507,10 @@
       "gotoModule": {
         "0": "condition_checkSIMCard",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "condition",
@@ -478,12 +529,15 @@
         }
       },
       "moduleUIName": "condition_checkSIMCard",
-      "x": 974,
-      "y": 390,
+      "x": 1034,
+      "y": 89,
       "gotoModule": {
         "case0": "userAction_removeSIMCard",
         "others": "deepClean_20"
-      }
+      },
+      "successCodes": [
+        "case0"
+      ]
     },
     {
       "moduleName": "userAction",
@@ -504,12 +558,15 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "userAction_removeSIMCard",
-      "x": 944,
-      "y": 489,
+      "x": 976,
+      "y": 258,
       "gotoModule": {
         "0": "deepClean_20",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "deepClean",
@@ -528,12 +585,15 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "deepClean_20",
-      "x": 1157,
-      "y": 566,
+      "x": 1185,
+      "y": 319,
       "gotoModule": {
         "0": "refurbish_21",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "refurbish",
@@ -568,12 +628,15 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "refurbish_21",
-      "x": 1099,
-      "y": 647,
+      "x": 1047,
+      "y": 368,
       "gotoModule": {
-        "0": "powerDevice_22",
+        "0": "installRADI_4",
         "others": ""
-      }
+      },
+      "successCodes": [
+        "0"
+      ]
     },
     {
       "moduleName": "powerDevice",
@@ -593,10 +656,155 @@
         "-1": "failure, exception"
       },
       "moduleUIName": "powerDevice_22",
-      "x": 989,
-      "y": 724,
+      "x": 830,
+      "y": 686,
       "gotoModule": {
         "0": "",
+        "others": ""
+      },
+      "successCodes": [
+        "0"
+      ]
+    },
+    {
+      "moduleName": "condition",
+      "description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+      "input": {
+        "conditions": {
+          "case0": {
+            "op": "",
+            "items": [],
+            "field": "DeviceType",
+            "value": "iOS"
+          }
+        }
+      },
+      "successCodes": [
+        "case0"
+      ],
+      "moduleUIName": "condition_checkPlatform1",
+      "x": 907,
+      "y": 483,
+      "gotoModule": {
+        "case0": "activeDevice_2",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "activeDevice",
+      "description": "active device.",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "180",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "successCodes": [
+        "0"
+      ],
+      "_result_description": {
+        "0": "success, active device success",
+        "1": "failure, active device failure",
+        "2": "failure, not iOS device",
+        "3": "failure, no UDID, device may not under normal mode",
+        "4": "failure, active device failure - reason found FMI",
+        "5": "failure, active device failure - reason wrong sim card",
+        "6": "failure, active device failure - reason need to select carrier",
+        "7": "failure, active device failure - reason demo phone",
+        "8": "failure, active device failure - reason phone issue",
+        "9": "failure, active device failure - reason network issue",
+        "1460": "failure, timeout",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "activeDevice_2",
+      "x": 837,
+      "y": 541,
+      "gotoModule": {
+        "0": "skipWelcome_3",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "skipWelcome",
+      "description": "skip welcome.",
+      "input": {
+        "skipScreen": "FFFFFFFFFFFFFFFF",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "180",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "successCodes": [
+        "0"
+      ],
+      "_result_description": {
+        "0": "success, skip welcome screen success",
+        "1": "failure, skip welcome screen failure",
+        "2": "failure, no UDID, device may not under normal mode",
+        "3": "not support android",
+        "4": "This device must be confgured using the Device Enrollment Program",
+        "5": "A cloud configuration is already present on this device",
+        "1460": "failure, timeout",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "skipWelcome_3",
+      "x": 835,
+      "y": 613,
+      "gotoModule": {
+        "0": "powerDevice_22",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "installRADI",
+      "description": "install radi.",
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "180",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "successCodes": [
+        "0"
+      ],
+      "_result_description": {
+        "0": "success, install radi success",
+        "1": "failure, install radi failure",
+        "1460": "failure, timeout",
+        "-1": "failure, exception"
+      },
+      "moduleUIName": "installRADI_4",
+      "x": 1143,
+      "y": 423,
+      "gotoModule": {
+        "0": "condition_checkPlatform1",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "queryDMServer",
+      "description": "query DM Server.",
+      "input": {
+        "queryDMKey": "",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "180",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "successCodes": [
+        "abcd"
+      ],
+      "_result_description": {
+        "1": "failure, not found key assignedOutput",
+        "1460": "failure, timeout",
+        "-1": "failure, exception",
+        "assignedOutput": "success, return the value of key assignedOutput from server response data"
+      },
+      "moduleUIName": "queryDMServer_5",
+      "x": 853,
+      "y": 164,
+      "gotoModule": {
+        "0": "readStolen_12",
         "others": ""
       }
     }
