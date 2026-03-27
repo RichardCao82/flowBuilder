@@ -1027,7 +1027,7 @@ document.addEventListener('DOMContentLoaded', () => {
             description: `${flowName} 流程`,
             flowName: flowName,
             flowEstimationTime: "3600", // 修改默认值为 3600
-            flowFirstmodule: flowNodes.length > 0 ? flowNodes[0].moduleUIName : "",
+            flowFirstModuleUIName: flowNodes.length > 0 ? flowNodes[0].moduleUIName : "",
             modules: []
         };
 
