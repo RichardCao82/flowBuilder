@@ -468,7 +468,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // });
 
         document.getElementById('detail-successCodes').addEventListener('change', (e) => {
-            module.successCodes = parseSuccessCodesFromDisplay(e.target.value, module.moduleName);
+            module.successCodes = parseSuccessCodesStrict(e.target.value);
             e.target.value = formatSuccessCodesForDisplay(module.successCodes);
         });
 
@@ -476,6 +476,17 @@ document.addEventListener('DOMContentLoaded', () => {
         renderInputEditor(module, inputEditor);
 
         document.getElementById('update-module-details').addEventListener('click', () => {
+            const successCodesInput = document.getElementById('detail-successCodes');
+            const strictSuccessCodes = parseSuccessCodesStrict(successCodesInput.value);
+            if (strictSuccessCodes.length === 0) {
+                alert('successCodes 不能为空，请至少填写一个成功码。');
+                successCodesInput.focus();
+                return;
+            }
+
+            module.successCodes = strictSuccessCodes;
+            successCodesInput.value = formatSuccessCodesForDisplay(module.successCodes);
+
             // 重新渲染以确保所有更改都反映在 UI 和数据中
             renderFlowNodes();
             alert('模块详情已更新！');
@@ -637,13 +648,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         const case0 = module.input.conditions.case0;
+        const moduleParamDef = availableModuleParameters.find(mp => mp.moduleName === 'condition');
 
-        container.innerHTML = `
+        // condition 也要显示公共重试与超时参数
+        ['retryTimeWhenFail', 'retryInterval', 'moduleTimeout'].forEach((key) => {
+            const paramDef = moduleParamDef && moduleParamDef.input ? moduleParamDef.input[key] : null;
+            if (module.input[key] === undefined && paramDef && paramDef.default !== undefined) {
+                module.input[key] = paramDef.default;
+            }
+
+            if (paramDef) {
+                renderParameterInput(key, paramDef, module.input, container, 0, module);
+            } else {
+                const label = document.createElement('label');
+                label.textContent = `${key}:`;
+                container.appendChild(label);
+
+                const input = document.createElement('input');
+                input.type = 'text';
+                input.value = module.input[key] !== undefined ? module.input[key] : '';
+                input.addEventListener('change', (e) => {
+                    module.input[key] = e.target.value;
+                    updateModuleDetailsAndRender();
+                });
+                container.appendChild(input);
+            }
+        });
+
+        const logicWrapper = document.createElement('div');
+        logicWrapper.innerHTML = `
             <div class="condition-input-form">
                 <h4>条件表达式 (Case 0)</h4>
                 <div id="case0-logic-editor"></div>
             </div>
         `;
+        container.appendChild(logicWrapper);
 
         const logicEditor = document.getElementById('case0-logic-editor');
         renderConditionLogic(case0, logicEditor, 0); // 渲染第一层逻辑，深度为0
@@ -781,6 +820,23 @@ document.addEventListener('DOMContentLoaded', () => {
         return parsed.length > 0 ? parsed : getDefaultSuccessCodes(moduleName);
     }
 
+    function parseSuccessCodesStrict(value) {
+        if (Array.isArray(value)) {
+            return value
+                .map(item => String(item).trim())
+                .filter(item => item !== '');
+        }
+
+        if (typeof value !== 'string') {
+            return [];
+        }
+
+        return value
+            .split(',')
+            .map(item => item.trim())
+            .filter(item => item !== '');
+    }
+
     function formatSuccessCodesForDisplay(successCodes) {
         if (!Array.isArray(successCodes)) {
             return '';
@@ -913,8 +969,19 @@ document.addEventListener('DOMContentLoaded', () => {
                     // 画布输出锚点使用 output-0 / output-others；condition JSON 里是 case0。
                     // 加载时统一归一化，确保历史数据可以正确渲染连线。
                     let normalizedHandleType = handleType;
-                    if (handleType === 'case0') {
+                    if (handleType === 'others') {
+                        normalizedHandleType = 'others';
+                    } else {
                         normalizedHandleType = '0';
+                    }
+
+                    const duplicatedConnection = connections.find(conn =>
+                        conn.startNodeId === moduleData.id &&
+                        conn.startHandleType === normalizedHandleType &&
+                        conn.endNodeId === targetModuleUIName
+                    );
+                    if (duplicatedConnection) {
+                        continue;
                     }
 
                     connections.push({
@@ -991,40 +1058,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     case0: node.input.conditions.case0 || { op: "", items: [] }
                 };
                 delete moduleToSave.input.condition;
-
-                // 构建 gotoModule
-                moduleToSave.gotoModule = {};
-
-                // 处理 case0 的连接 (对应 output-0)
-                const case0ConnectedTarget = connections.find(conn =>
-                    conn.startNodeId === node.id && conn.startHandleType === '0'
-                );
-                moduleToSave.gotoModule['case0'] = case0ConnectedTarget ? case0ConnectedTarget.endNodeId : "";
-
-                // 处理 others 的连接
-                const othersConnectedTarget = connections.find(conn =>
-                    conn.startNodeId === node.id && conn.startHandleType === 'others'
-                );
-                moduleToSave.gotoModule['others'] = othersConnectedTarget ? othersConnectedTarget.endNodeId : "";
-
-            } else {
-                // 对于其他模块，使用硬编码的 0 和 others 作为 gotoModule 的键
-                moduleToSave.gotoModule = {
-                    "0": "",
-                    "others": ""
-                };
-                connections.forEach(conn => {
-                    if (conn.startNodeId === node.id) {
-                        moduleToSave.gotoModule[conn.startHandleType] = conn.endNodeId;
-                    }
-                });
-                // 如果原始模块有 gotoModule，但没有连接，则保留原始的
-                if (node.gotoModule && Object.keys(node.gotoModule).length > 0) {
-                    if (Object.keys(moduleToSave.gotoModule).every(key => moduleToSave.gotoModule[key] === "")) {
-                         moduleToSave.gotoModule = node.gotoModule;
-                    }
-                }
             }
+
+            const successConnectedTarget = connections.find(conn =>
+                conn.startNodeId === node.id && conn.startHandleType !== 'others'
+            );
+            const othersConnectedTarget = connections.find(conn =>
+                conn.startNodeId === node.id && conn.startHandleType === 'others'
+            );
+
+            const successTargetId = successConnectedTarget ? successConnectedTarget.endNodeId : '';
+            const othersTargetId = othersConnectedTarget ? othersConnectedTarget.endNodeId : '';
+
+            moduleToSave.gotoModule = {};
+            moduleToSave.successCodes.forEach((code) => {
+                const normalizedCode = String(code).trim();
+                if (!normalizedCode || normalizedCode === 'others') {
+                    return;
+                }
+                const fallbackTarget = node.gotoModule && typeof node.gotoModule === 'object'
+                    ? (node.gotoModule[normalizedCode] || '')
+                    : '';
+                moduleToSave.gotoModule[normalizedCode] = successTargetId || fallbackTarget;
+            });
+
+            const othersFallbackTarget = node.gotoModule && typeof node.gotoModule === 'object'
+                ? (node.gotoModule.others || '')
+                : '';
+            moduleToSave.gotoModule.others = othersTargetId || othersFallbackTarget;
 
 
             savedFlow.modules.push(moduleToSave);

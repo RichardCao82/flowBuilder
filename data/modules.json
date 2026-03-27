@@ -15,9 +15,11 @@
 		],
 		"_result_description": {
 			"-1": "failure, exception",
-			"0": "success, user input data done",
-			"1": "failure, user cancel input data",
-			"1460": "failure, timeout"
+			"0": "success, user response yes",
+			"1": "success, user response no",
+			"2": "failure, user response cancel",
+			"3": "failure, user response wrong_msg",
+			"1460": "failure, timeout or reach maximum retry times"
 		}
 	},
 	{
@@ -515,7 +517,8 @@
 			"0": "success, user response yes",
 			"1": "success, user response no",
 			"2": "failure, user response cancel",
-			"3": "failure, timeout or reach maximum retry times"
+			"3": "failure, user response wrong_msg",
+			"1460": "failure, timeout or reach maximum retry times"
 		}
 	},
 	{
@@ -582,8 +585,8 @@
 		"moduleName": "powerDevice",
 		"description": "power device.",
 		"input": {
-			"method": "powerOff",
-			"_method": "powerOff, reboot",
+			"method": "shutdown",
+			"_method": "shutdown, reboot",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "180",
