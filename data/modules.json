@@ -1,10 +1,19 @@
 [
 	{
+		"_comment_module_1": "The units for the \"retryInterval\", \"moduleTimeout\" and \"batteryChargeTime\" fields are seconds.",
+		"_comment_module_2": "Entering \"-1\" in the \"moduleTimeout\", \"batteryChargeTime\" and \"retryTimeWhenFail\" fields indicates \"indefinite.\"",
+		"_comment_module_3": "The \"successCodes\" field is an empty list, indicating that all error codes are considered to represent successful execution of this module.",
+		"_comment_module_4": "The \"supportPlatforms\" field is an empty list, indicating that this module is not associated with any platforms.",
+		"_comment_flow_1": "A \"moduleUIName\" field must be created for each module in the flow, and this name must be unique.",
+		"_comment_flow_2": "A \"gotoModule\" field must be created for each module in the flow, and this field must contain a field named \"others\"."
+	},
+	{
 		"moduleName": "manualInput",
 		"description": "A UI window pops up, prompting the user to enter data.",
+		"supportPlatforms": [],
 		"input": {
 			"manualInputKey": "",
-			"_manualInputKey": "A list of valid keys needs to be provided to the UI.",
+			"_manualInputKey": "A list of valid keys needs to be provided to the flow builder.",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "600",
@@ -13,20 +22,24 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, user response yes",
-			"1": "success, user response no",
+			"1": "failure, user response no",
 			"2": "failure, user response cancel",
 			"3": "failure, user response wrong_msg",
+			"4": "failure, no manualInputKey in input params, wrong flow config",
 			"1460": "failure, timeout or reach maximum retry times"
 		}
 	},
 	{
-		"moduleUIName": "checkBatteryLevel",
-		"_moduleUIName": "The UI displays this name to the user, and it must be unique throughout the entire flow.",
 		"moduleName": "checkBatteryLevel",
 		"description": "check battery level of the device on a specific USB port",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
 			"batteryTargetLevel": "30",
 			"batteryChargeTime": "600",
@@ -38,7 +51,8 @@
 		"successCodes": [
 			"0"
 		],
-		"result_description": {
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, battery level reach target battery level",
 			"1": "failure, battery level is not reach target battery level - reach maximum waiting time or reach maximum retry times",
@@ -50,6 +64,7 @@
 	{
 		"moduleName": "condition",
 		"description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+		"supportPlatforms": [],
 		"input": {
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
@@ -125,12 +140,24 @@
 		},
 		"successCodes": [
 			"case0"
-		]
+		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+		"_result_description": {
+			"-1": "failure, exception",
+			"caseName": "success, match a case, return the case name, eg: case0",
+			"others": "failure, not match any case",
+			"1460": "failure, flow set module maximum wait time reached"
+		}
 	},
 	{
 		"moduleName": "fastClean",
 		"description": "fastClean Device.",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
+			"howManyLatestVersionSupportFastClear": "all",
+			"_howManyLatestVersionSupportFastClear": "all: Indicates any version. 1: Indicates only the latest version. 2: Indicates the latest version and the previous latest version.",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "300",
@@ -139,6 +166,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, fast clean device success",
@@ -152,6 +180,9 @@
 	{
 		"moduleName": "readFMI",
 		"description": "Check if the equipment is lock by FMI.",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
 			"checkMethod": "device",
 			"_checkMethod": "device, forensic, prolog, ecoATM",
@@ -163,18 +194,24 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
-			"0": "success, read FMI info success",
-			"1": "failure, read FMI info failure - read out FMI is not Locked or UnLocked",
-			"2": "failure, not iOS device",
-			"3": "failure, no UDID, device may not under normal mode",
+			"0": "success, read FMI info UnLocked",
+			"1": "failure, read FMI info Locked",
+			"2": "failure, read FMI info Unknown",
+			"3": "failure, not iOS device",
+			"4": "failure, no UDID, device may not under normal mode",
+			"5": "failure, no IMEI info for query 3th party service",
 			"1460": "failure, timeout"
 		}
 	},
 	{
 		"moduleName": "readDEP",
 		"description": "Check if the equipment is lock by DEP.",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
@@ -184,18 +221,23 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
-			"0": "success, read DEP info success",
-			"1": "failure, read DEP info failure - read out DEP is not Locked or UnLocked",
-			"2": "failure, not iOS device",
-			"3": "failure, no UDID, device may not under normal mode",
+			"0": "success, read DEP info UnLocked",
+			"1": "failure, read DEP info Locked",
+			"2": "failure, read DEP info Unknown",
+			"3": "failure, not iOS device",
+			"4": "failure, no UDID, device may not under normal mode",
 			"1460": "failure, timeout"
 		}
 	},
 	{
 		"moduleName": "readComponents",
 		"description": "Read the iOS components info",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
@@ -207,6 +249,7 @@
 			"1",
 			"2"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, check if component is replaced of the device success, all component is genuine",
@@ -222,6 +265,9 @@
 	{
 		"moduleName": "readFMMFRPKME",
 		"description": "Check if the equipment is LOCKED by FMM,FRP,KME.",
+		"supportPlatforms": [
+			"android"
+		],
 		"input": {
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
@@ -231,19 +277,50 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
-			"0": "success, read device lock info success",
-			"1": "failure, read device lock info failure",
-			"2": "failure, not android device",
-			"3": "failure, not get SN of android device",
+			"0": "success: device is not Locked by FMM, FRP, or KME",
+			"1": "failure, not android device",
+			"2": "failure, not get SN of android device",
+			"3": "failure: FMM is Locked, FRP is Locked, KME is Locked",
+			"4": "failure: FMM is Locked, FRP is Locked, KME is UnLocked",
+			"5": "failure: FMM is Locked, FRP is Locked, KME is Unknown",
+			"6": "failure: FMM is Locked, FRP is UnLocked, KME is Locked",
+			"7": "failure: FMM is Locked, FRP is UnLocked, KME is UnLocked",
+			"8": "failure: FMM is Locked, FRP is UnLocked, KME is Unknown",
+			"9": "failure: FMM is Locked, FRP is Unknown, KME is Locked",
+			"10": "failure: FMM is Locked, FRP is Unknown, KME is UnLocked",
+			"11": "failure: FMM is Locked, FRP is Unknown, KME is Unknown",
+			"12": "failure: FMM is UnLocked, FRP is Locked, KME is Locked",
+			"13": "failure: FMM is UnLocked, FRP is Locked, KME is UnLocked",
+			"14": "failure: FMM is UnLocked, FRP is Locked, KME is Unknown",
+			"15": "failure: FMM is UnLocked, FRP is UnLocked, KME is Locked",
+			"16": "failure: FMM is UnLocked, FRP is UnLocked, KME is Unknown",
+			"17": "failure: FMM is UnLocked, FRP is Unknown, KME is Locked",
+			"18": "failure: FMM is UnLocked, FRP is Unknown, KME is UnLocked",
+			"19": "failure: FMM is UnLocked, FRP is Unknown, KME is Unknown",
+			"20": "failure: FMM is Unknown, FRP is Locked, KME is Locked",
+			"11": "failure: FMM is Unknown, FRP is Locked, KME is UnLocked",
+			"22": "failure: FMM is Unknown, FRP is Locked, KME is Unknown",
+			"23": "failure: FMM is Unknown, FRP is UnLocked, KME is Locked",
+			"24": "failure: FMM is Unknown, FRP is UnLocked, KME is UnLocked",
+			"25": "failure: FMM is Unknown, FRP is UnLocked, KME is Unknown",
+			"26": "failure: FMM is Unknown, FRP is Unknown, KME is Locked",
+			"27": "failure: FMM is Unknown, FRP is Unknown, KME is UnLocked",
+			"28": "failure: FMM is Unknown, FRP is Unknown, KME is Unknown",
 			"1460": "failure, timeout"
 		}
 	},
 	{
 		"moduleName": "dataCheck",
 		"description": "Check if the equipment is clean.",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
+			"howManyLatestVersionSupportFastClear": "all",
+			"_howManyLatestVersionSupportFastClear": "all: Indicates any version. 1: Indicates only the latest version. 2: Indicates the latest version and the previous latest version.",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "300",
@@ -252,16 +329,23 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
-			"0": "success, device under welcome screen and under unactivated status",
-			"1": "failure, device dirty",
+			"0": "success, device match data check definition",
+			"1": "failure, device does NOT match data check definition",
+			"2": "failure, not iOS device",
+			"3": "failure, iOS Version is not allow to do fast clear",
 			"1460": "failure, timeout"
 		}
 	},
 	{
 		"moduleName": "checkBatteryHealth",
 		"description": "Check the health of the device's battery.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
 			"iOSParam": {
 				"default": {
@@ -294,12 +378,13 @@
 			},
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
-			"moduleTimeout": "300",
+			"moduleTimeout": "600",
 			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
 		},
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, battery is healthy",
@@ -312,9 +397,14 @@
 	{
 		"moduleName": "readSIMLock",
 		"description": "Query server for SIM LOCK info.",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
-			"checkMethod": "forensic",
-			"_checkMethod": "forensic, prolog, ecoATM",
+			"checkMethod4iOS": "forensic",
+			"_checkMethod4iOS": "forensic, prolog, ecoATM",
+			"checkMethod4Android": "",
+			"_checkMethod4Android": "",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "300",
@@ -323,20 +413,28 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
-			"0": "success, read sim lock of device success",
-			"1": "failure, read sim lock of device failure",
-			"2": "failure, no IMEI info",
+			"0": "success, read sim lock info UnLocked",
+			"1": "failure, read sim lock info Locked",
+			"2": "failure, read sim lock info Unknown",
+			"3": "failure, no IMEI info for query 3th party service",
 			"1460": "failure, timeout"
 		}
 	},
 	{
 		"moduleName": "readStolen",
 		"description": "Query server for stolen info.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
-			"checkMethod": "recipe",
-			"_checkMethod": "recipe, GSMA",
+			"checkMethod4iOS": "recipe",
+			"_checkMethod4iOS": "recipe, GSMA",
+			"checkMethod4Android": "recipe",
+			"_checkMethod4Android": "recipe, GSMA",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "300",
@@ -345,20 +443,28 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
-			"0": "success, read stolen of device success",
-			"1": "failure, read stolen of device failure",
-			"2": "failure, no IMEI info",
+			"0": "success, read stolen info UnLocked",
+			"1": "failure, read stolen info Locked",
+			"2": "failure, read stolen info Unknown",
+			"3": "failure, no IMEI info for query 3th party service",
 			"1460": "failure, timeout"
 		}
 	},
 	{
 		"moduleName": "queryDeviceFinancialStatus",
 		"description": "Query server for device financial status.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
-			"checkMethod": "prolog",
-			"_checkMethod": "prolog, ecoATM",
+			"checkMethod4iOS": "prolog",
+			"_checkMethod4iOS": "prolog, ecoATM",
+			"checkMethod4Android": "prolog",
+			"_checkMethod4Android": "prolog, ecoATM",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "300",
@@ -367,17 +473,22 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, query get info success",
 			"1": "failure, query get info failure",
-			"2": "failure, no IMEI info",
+			"2": "failure, no IMEI info for query 3th party service",
 			"1460": "failure, timeout"
 		}
 	},
 	{
 		"moduleName": "functionTest",
 		"description": "functionTest feature.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
 			"sendFTResultOverWifi": "true",
 			"additionalTestFile": "",
@@ -398,6 +509,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, install function test and read out function test rsult success",
@@ -422,6 +534,10 @@
 	{
 		"moduleName": "installWifiProfile",
 		"description": "install wifi prfile feature.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
 			"wifiProfileFiles": [
 				"%apsthome%/3Party/wifi/RADI_UFO_8.zip",
@@ -436,6 +552,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, install wifi profile to device success",
@@ -449,6 +566,10 @@
 	{
 		"moduleName": "installApps",
 		"description": "install apps feature.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
 			"appsFiles": [
 				"%apsthome%/3Party/apps/ios/radi.ipa",
@@ -463,6 +584,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, install apps to device success",
@@ -477,6 +599,7 @@
 	{
 		"moduleName": "runExes",
 		"description": "run exe feature.",
+		"supportPlatforms": [],
 		"input": {
 			"exes": [
 				"%apsthome%/3party/exes/fdInstallApp.exe -deviceos=Apple -label=%label% -udid=%udid%"
@@ -489,6 +612,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, run exes success",
@@ -500,6 +624,7 @@
 	{
 		"moduleName": "userAction",
 		"description": "ask user do something.",
+		"supportPlatforms": [],
 		"input": {
 			"actionKey": "action_remove_simcard",
 			"_actionKey": "action_remove_simcard, action_remove_sdcard, action_remove_esim, action_close_tray",
@@ -512,18 +637,23 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, user response yes",
 			"1": "success, user response no",
 			"2": "failure, user response cancel",
-			"3": "failure, user response wrong_msg",
+			"3": "failure, user response wrong_msg, eg: the user is asked to remove the SIM card, but believes the device does not have a SIM card at all.",
 			"1460": "failure, timeout or reach maximum retry times"
 		}
 	},
 	{
 		"moduleName": "deepClean",
 		"description": "deep clean device.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
 			"deepCleanMethodName": "OneTime_Rdm",
 			"retryTimeWhenFail": "1",
@@ -534,6 +664,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, deep clean device success",
@@ -546,6 +677,10 @@
 	{
 		"moduleName": "refurbish",
 		"description": "refurbish device.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
 			"customizeIpsw": {
 				"ipswFolder": "",
@@ -572,6 +707,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, refurbish device success",
@@ -584,9 +720,12 @@
 	{
 		"moduleName": "powerDevice",
 		"description": "power device.",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
-			"method": "shutdown",
-			"_method": "shutdown, reboot",
+			"method": "powerOff",
+			"_method": "powerOff, reboot",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "180",
@@ -595,6 +734,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, power off device success",
@@ -608,6 +748,9 @@
 	{
 		"moduleName": "activeDevice",
 		"description": "active device.",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
@@ -617,6 +760,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, active device success",
@@ -635,6 +779,9 @@
 	{
 		"moduleName": "skipWelcome",
 		"description": "skip welcome.",
+		"supportPlatforms": [
+			"ios"
+		],
 		"input": {
 			"skipScreen": "FFFFFFFFFFFFFFFF",
 			"retryTimeWhenFail": "1",
@@ -645,6 +792,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, skip welcome screen success",
@@ -659,6 +807,7 @@
 	{
 		"moduleName": "queryDMServer",
 		"description": "query DM Server.",
+		"supportPlatforms": [],
 		"input": {
 			"queryDMKey": "",
 			"retryTimeWhenFail": "1",
@@ -667,16 +816,22 @@
 			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
 		},
 		"successCodes": [],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"assignedOutput": "success, return the value of key assignedOutput from server response data",
 			"1": "failure, not found key assignedOutput",
+			"2": "failure, no query dm key in input params, wrong flow config",
 			"1460": "failure, timeout"
 		}
 	},
 	{
 		"moduleName": "installRADI",
 		"description": "install radi.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
 		"input": {
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
@@ -686,6 +841,7 @@
 		"successCodes": [
 			"0"
 		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "failure, exception",
 			"0": "success, install radi success",
