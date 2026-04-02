@@ -240,7 +240,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(`HTTP error! status: ${paramsResponse.status} for modules_parameter.json`);
             }
 
-            availableModules = await modulesResponse.json();
+            const rawModules = await modulesResponse.json();
+            availableModules = Array.isArray(rawModules)
+                ? rawModules.filter(module => module && typeof module.moduleName === 'string' && module.moduleName.trim() !== '')
+                : [];
             availableModuleParameters = await paramsResponse.json();
             availableModules.forEach(ensureModuleSuccessCodes);
 
@@ -1034,6 +1037,17 @@ document.addEventListener('DOMContentLoaded', () => {
         flowNodes.forEach(node => {
             const moduleToSave = { ...node };
             ensureModuleSuccessCodes(moduleToSave);
+
+            // 保留并补齐 supportPlatforms：优先使用节点当前值，缺失时回退到模块模板值
+            const moduleTemplate = availableModules.find(m => m.moduleName === node.moduleName);
+            const templatePlatforms = moduleTemplate ? moduleTemplate.supportPlatforms : undefined;
+            const sourcePlatforms = moduleToSave.supportPlatforms !== undefined
+                ? moduleToSave.supportPlatforms
+                : templatePlatforms;
+            moduleToSave.supportPlatforms = sourcePlatforms !== undefined
+                ? JSON.parse(JSON.stringify(sourcePlatforms))
+                : [];
+
             // 清理临时属性
             delete moduleToSave.id;
             // 保留 x, y 坐标，用于加载时还原位置
