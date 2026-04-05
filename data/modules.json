@@ -1,6 +1,6 @@
 [
 	{
-		"_comment_module_1": "The units for the \"retryInterval\", \"moduleTimeout\" and \"batteryChargeTime\" fields are seconds.",
+		"_comment_module_1": "The units for the \"estimatedTime\", \"retryInterval\", \"moduleTimeout\" and \"batteryChargeTime\" fields are seconds.",
 		"_comment_module_2": "Entering \"-1\" in the \"moduleTimeout\", \"batteryChargeTime\" and \"retryTimeWhenFail\" fields indicates \"indefinite.\"",
 		"_comment_module_3": "The \"successCodes\" field is an empty list, indicating that all error codes are considered to represent successful execution of this module.",
 		"_comment_module_4": "The \"supportPlatforms\" field is an empty list, indicating that this module is not associated with any platforms.",
@@ -8,8 +8,38 @@
 		"_comment_flow_2": "A \"gotoModule\" field must be created for each module in the flow, and this field must contain a field named \"others\"."
 	},
 	{
+		"moduleName": "Group",
+		"description": "this is shell module for grouping other modules, it has no actual execution logic.",
+		"estimatedTime": "0",
+		"_estimatedTime": "The sum of the estimated times of all submodules",
+		"supportPlatforms": [],
+		"input": {
+			"subModules": [],
+			"_subModules": "A list of sub modules to be executed in this group, the execution order is from top to bottom. The sub module can be any module including Group module, but it should not be the module itself or its upstream modules, otherwise it will cause cyclic call.",
+			"retryTimeWhenFail": "1",
+			"retryInterval": "5",
+			"moduleTimeout": "3600",
+			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. Execution will resume after waiting for a UI response message."
+		},
+		"codesDefine": {
+			"group_success": {},
+			"_comment": "will only consider the submodules that have been executed, if all of their execution results are in the defined success codes, then it is considered as group_success, otherwise it is considered as others. If a submodule does not have defined success codes, then any execution result of this submodule will be considered as success for this submodule."
+		},
+		"successCodes": [
+			"group_success"
+		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+		"_result_description": {
+			"group_success": "define is codesDefine field",
+			"group_failure": "define is codesDefine field",
+			"1460": "timeout or reach maximum retry times"
+		}
+	},
+	{
 		"moduleName": "manualInput",
 		"description": "A UI window pops up, prompting the user to enter data.",
+		"estimatedTime": "60",
+		"_estimatedTime": "It depends on the user's response time and the configuration of the input fields.",
 		"supportPlatforms": [],
 		"input": {
 			"manualInputKey": "",
@@ -24,17 +54,19 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, user response yes",
-			"1": "failure, user response no",
-			"2": "failure, user response cancel",
-			"3": "failure, user response wrong_msg",
-			"4": "failure, no manualInputKey in input params, wrong flow config",
-			"1460": "failure, timeout or reach maximum retry times"
+			"-1": "exception",
+			"0": "user response yes",
+			"1": "user response no",
+			"2": "user response cancel",
+			"3": "user response wrong_msg",
+			"4": "no manualInputKey in input params, wrong flow config",
+			"1460": "timeout or reach maximum retry times"
 		}
 	},
 	{
 		"moduleName": "checkBatteryLevel",
+		"estimatedTime": "60",
+		"_estimatedTime": "This depends on the device's current battery level, the target battery level set in the input, and the device's charging speed.",
 		"description": "check battery level of the device on a specific USB port",
 		"supportPlatforms": [
 			"ios",
@@ -53,17 +85,19 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, battery level reach target battery level",
-			"1": "failure, battery level is not reach target battery level - reach maximum waiting time or reach maximum retry times",
-			"2": "failure, no UDID, device may not under normal mode",
-			"3": "failure, no SN for android device",
-			"1460": "failure, flow set module maximum wait time reached, but device did not reach target battery level"
+			"-1": "exception",
+			"0": "battery level reach target battery level",
+			"1": "battery level is not reach target battery level - reach maximum waiting time or reach maximum retry times",
+			"2": "no UDID, device may not under normal mode",
+			"3": "no SN for android device",
+			"1460": "flow set module maximum wait time reached, but device did not reach target battery level"
 		}
 	},
 	{
 		"moduleName": "condition",
 		"description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+		"estimatedTime": "1",
+		"_estimatedTime": "should be less 1 second, as it is only for checking some conditions and then jump to the target module, there is no actual execution logic in this module.",
 		"supportPlatforms": [],
 		"input": {
 			"retryTimeWhenFail": "1",
@@ -143,15 +177,17 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"caseName": "success, match a case, return the case name, eg: case0",
-			"others": "failure, not match any case",
-			"1460": "failure, flow set module maximum wait time reached"
+			"-1": "exception",
+			"caseName": "match a case, return the case name, eg: case0",
+			"others": "not match any case",
+			"1460": "flow set module maximum wait time reached"
 		}
 	},
 	{
 		"moduleName": "fastClean",
 		"description": "fastClean Device.",
+		"estimatedTime": "100",
+		"_estimatedTime": "The fastClean operation should be completed within 5 seconds; the remaining time is allocated for waiting for the device to restart and be detected.",
 		"supportPlatforms": [
 			"ios"
 		],
@@ -168,18 +204,20 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, fast clean device success",
-			"1": "failure, fast clean device failure",
-			"2": "failure, not iOS device",
-			"3": "failure, no UDID, device may not under normal mode",
-			"4": "failure, iOS Version is not allow to do fast clear",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "fast clean device success",
+			"1": "fast clean device failure",
+			"2": "not iOS device",
+			"3": "no UDID, device may not under normal mode",
+			"4": "iOS Version is not allow to do fast clear",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "readFMI",
 		"description": "Check if the equipment is lock by FMI.",
+		"estimatedTime": "10",
+		"_estimatedTime": "In most cases, using device-side methods takes less than 10 seconds, whereas the time required to query third-party services depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios"
 		],
@@ -196,19 +234,21 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, read FMI info UnLocked",
-			"1": "failure, read FMI info Locked",
-			"2": "failure, read FMI info Unknown",
-			"3": "failure, not iOS device",
-			"4": "failure, no UDID, device may not under normal mode",
-			"5": "failure, no IMEI info for query 3th party service",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "read FMI info UnLocked",
+			"1": "read FMI info Locked",
+			"2": "read FMI info Unknown",
+			"3": "not iOS device",
+			"4": "no UDID, device may not under normal mode",
+			"5": "no IMEI info for query 3th party service",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "readDEP",
 		"description": "Check if the equipment is lock by DEP.",
+		"estimatedTime": "150",
+		"_estimatedTime": "The specific duration depends on the device's status and the detection method used. In a worst-case scenario—specifically, when the device first requires a \"FastClean\" operation—the entire process may take over 150 seconds, as this period may involve waiting for the device to restart and be re-recognized by the system.",
 		"supportPlatforms": [
 			"ios"
 		],
@@ -223,18 +263,20 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, read DEP info UnLocked",
-			"1": "failure, read DEP info Locked",
-			"2": "failure, read DEP info Unknown",
-			"3": "failure, not iOS device",
-			"4": "failure, no UDID, device may not under normal mode",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "read DEP info UnLocked",
+			"1": "read DEP info Locked",
+			"2": "read DEP info Unknown",
+			"3": "not iOS device",
+			"4": "no UDID, device may not under normal mode",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "readComponents",
 		"description": "Read the iOS components info",
+		"estimatedTime": "240",
+		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios"
 		],
@@ -251,20 +293,22 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, check if component is replaced of the device success, all component is genuine",
-			"1": "success, check if component is replaced of the device success, found some of component is replaced",
-			"2": "success, check if component is replaced of the device success, found some of component is unknown",
-			"3": "failure, check if component is replaced of the device failure",
-			"4": "failure, not iOS device",
-			"5": "failure, no UDID, device may not under normal mode",
-			"6": "failure, device is old and not qualify for log check",
-			"1460": "failure, module timeout quit"
+			"-1": "exception",
+			"0": "check if component is replaced of the device success, all component is genuine",
+			"1": "check if component is replaced of the device success, found some of component is replaced",
+			"2": "check if component is replaced of the device success, found some of component is unknown",
+			"3": "check if component is replaced of the device failure",
+			"4": "not iOS device",
+			"5": "no UDID, device may not under normal mode",
+			"6": "device is old and not qualify for log check",
+			"1460": "module timeout quit"
 		}
 	},
 	{
 		"moduleName": "readFMMFRPKME",
 		"description": "Check if the equipment is LOCKED by FMM,FRP,KME.",
+		"estimatedTime": "120",
+		"_estimatedTime": "",
 		"supportPlatforms": [
 			"android"
 		],
@@ -279,42 +323,44 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success: device is not Locked by FMM, FRP, or KME",
-			"1": "failure, not android device",
-			"2": "failure, not get SN of android device",
-			"3": "failure: FMM is Locked, FRP is Locked, KME is Locked",
-			"4": "failure: FMM is Locked, FRP is Locked, KME is UnLocked",
-			"5": "failure: FMM is Locked, FRP is Locked, KME is Unknown",
-			"6": "failure: FMM is Locked, FRP is UnLocked, KME is Locked",
-			"7": "failure: FMM is Locked, FRP is UnLocked, KME is UnLocked",
-			"8": "failure: FMM is Locked, FRP is UnLocked, KME is Unknown",
-			"9": "failure: FMM is Locked, FRP is Unknown, KME is Locked",
-			"10": "failure: FMM is Locked, FRP is Unknown, KME is UnLocked",
-			"11": "failure: FMM is Locked, FRP is Unknown, KME is Unknown",
-			"12": "failure: FMM is UnLocked, FRP is Locked, KME is Locked",
-			"13": "failure: FMM is UnLocked, FRP is Locked, KME is UnLocked",
-			"14": "failure: FMM is UnLocked, FRP is Locked, KME is Unknown",
-			"15": "failure: FMM is UnLocked, FRP is UnLocked, KME is Locked",
-			"16": "failure: FMM is UnLocked, FRP is UnLocked, KME is Unknown",
-			"17": "failure: FMM is UnLocked, FRP is Unknown, KME is Locked",
-			"18": "failure: FMM is UnLocked, FRP is Unknown, KME is UnLocked",
-			"19": "failure: FMM is UnLocked, FRP is Unknown, KME is Unknown",
-			"20": "failure: FMM is Unknown, FRP is Locked, KME is Locked",
-			"11": "failure: FMM is Unknown, FRP is Locked, KME is UnLocked",
-			"22": "failure: FMM is Unknown, FRP is Locked, KME is Unknown",
-			"23": "failure: FMM is Unknown, FRP is UnLocked, KME is Locked",
-			"24": "failure: FMM is Unknown, FRP is UnLocked, KME is UnLocked",
-			"25": "failure: FMM is Unknown, FRP is UnLocked, KME is Unknown",
-			"26": "failure: FMM is Unknown, FRP is Unknown, KME is Locked",
-			"27": "failure: FMM is Unknown, FRP is Unknown, KME is UnLocked",
-			"28": "failure: FMM is Unknown, FRP is Unknown, KME is Unknown",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "device is not Locked by FMM, FRP, or KME",
+			"1": "not android device",
+			"2": "not get SN of android device",
+			"3": "FMM is Locked, FRP is Locked, KME is Locked",
+			"4": "FMM is Locked, FRP is Locked, KME is UnLocked",
+			"5": "FMM is Locked, FRP is Locked, KME is Unknown",
+			"6": "FMM is Locked, FRP is UnLocked, KME is Locked",
+			"7": "FMM is Locked, FRP is UnLocked, KME is UnLocked",
+			"8": "FMM is Locked, FRP is UnLocked, KME is Unknown",
+			"9": "FMM is Locked, FRP is Unknown, KME is Locked",
+			"10": "FMM is Locked, FRP is Unknown, KME is UnLocked",
+			"11": "FMM is Locked, FRP is Unknown, KME is Unknown",
+			"12": "FMM is UnLocked, FRP is Locked, KME is Locked",
+			"13": "FMM is UnLocked, FRP is Locked, KME is UnLocked",
+			"14": "FMM is UnLocked, FRP is Locked, KME is Unknown",
+			"15": "FMM is UnLocked, FRP is UnLocked, KME is Locked",
+			"16": "FMM is UnLocked, FRP is UnLocked, KME is Unknown",
+			"17": "FMM is UnLocked, FRP is Unknown, KME is Locked",
+			"18": "FMM is UnLocked, FRP is Unknown, KME is UnLocked",
+			"19": "FMM is UnLocked, FRP is Unknown, KME is Unknown",
+			"20": "FMM is Unknown, FRP is Locked, KME is Locked",
+			"11": "FMM is Unknown, FRP is Locked, KME is UnLocked",
+			"22": "FMM is Unknown, FRP is Locked, KME is Unknown",
+			"23": "FMM is Unknown, FRP is UnLocked, KME is Locked",
+			"24": "FMM is Unknown, FRP is UnLocked, KME is UnLocked",
+			"25": "FMM is Unknown, FRP is UnLocked, KME is Unknown",
+			"26": "FMM is Unknown, FRP is Unknown, KME is Locked",
+			"27": "FMM is Unknown, FRP is Unknown, KME is UnLocked",
+			"28": "FMM is Unknown, FRP is Unknown, KME is Unknown",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "dataCheck",
 		"description": "Check if the equipment is clean.",
+		"estimatedTime": "10",
+		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios"
 		],
@@ -331,17 +377,19 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, device match data check definition",
-			"1": "failure, device does NOT match data check definition",
-			"2": "failure, not iOS device",
-			"3": "failure, iOS Version is not allow to do fast clear",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "device match data check definition",
+			"1": "device does NOT match data check definition",
+			"2": "not iOS device",
+			"3": "iOS Version is not allow to do fast clear",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "checkBatteryHealth",
 		"description": "Check the health of the device's battery.",
+		"estimatedTime": "10",
+		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios",
 			"android"
@@ -386,76 +434,19 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, battery is healthy",
-			"1": "failure, battery is not healthy",
-			"2": "failure, no UDID, device may not under normal mode",
-			"3": "failure, no SN for android device",
-			"1460": "failure, timeout"
-		}
-	},
-	{
-		"moduleName": "readSIMLock",
-		"description": "Query server for SIM LOCK info.",
-		"supportPlatforms": [
-			"ios"
-		],
-		"input": {
-			"checkMethod4iOS": "forensic",
-			"_checkMethod4iOS": "forensic, prolog, ecoATM",
-			"checkMethod4Android": "",
-			"_checkMethod4Android": "",
-			"retryTimeWhenFail": "1",
-			"retryInterval": "5",
-			"moduleTimeout": "300",
-			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-		},
-		"successCodes": [
-			"0"
-		],
-		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
-		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, read sim lock info UnLocked",
-			"1": "failure, read sim lock info Locked",
-			"2": "failure, read sim lock info Unknown",
-			"3": "failure, no IMEI info for query 3th party service",
-			"1460": "failure, timeout"
-		}
-	},
-	{
-		"moduleName": "readStolen",
-		"description": "Query server for stolen info.",
-		"supportPlatforms": [
-			"ios",
-			"android"
-		],
-		"input": {
-			"checkMethod4iOS": "recipe",
-			"_checkMethod4iOS": "recipe, GSMA",
-			"checkMethod4Android": "recipe",
-			"_checkMethod4Android": "recipe, GSMA",
-			"retryTimeWhenFail": "1",
-			"retryInterval": "5",
-			"moduleTimeout": "300",
-			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-		},
-		"successCodes": [
-			"0"
-		],
-		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
-		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, read stolen info UnLocked",
-			"1": "failure, read stolen info Locked",
-			"2": "failure, read stolen info Unknown",
-			"3": "failure, no IMEI info for query 3th party service",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "battery is healthy",
+			"1": "battery is not healthy",
+			"2": "no UDID, device may not under normal mode",
+			"3": "no SN for android device",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "queryDeviceFinancialStatus",
 		"description": "Query server for device financial status.",
+		"estimatedTime": "10",
+		"_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios",
 			"android"
@@ -475,30 +466,97 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, query get info success",
-			"1": "failure, query get info failure",
-			"2": "failure, no IMEI info for query 3th party service",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "query get info success",
+			"1": "query get info failure",
+			"2": "no IMEI info for query 3th party service",
+			"3": "unknow check method",
+			"1460": "timeout"
 		}
 	},
 	{
-		"moduleName": "functionTest",
-		"description": "functionTest feature.",
+		"moduleName": "readSIMLock",
+		"description": "Query server for SIM LOCK info.",
+		"estimatedTime": "10",
+		"_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
+		"supportPlatforms": [
+			"ios"
+		],
+		"input": {
+			"checkMethod4iOS": "forensic",
+			"_checkMethod4iOS": "forensic, prolog, ecoATM",
+			"checkMethod4Android": "",
+			"_checkMethod4Android": "",
+			"retryTimeWhenFail": "1",
+			"retryInterval": "5",
+			"moduleTimeout": "300",
+			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+		},
+		"successCodes": [
+			"0"
+		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+		"_result_description": {
+			"-1": "exception",
+			"0": "read sim lock info UnLocked",
+			"1": "read sim lock info Locked",
+			"2": "read sim lock info Unknown",
+			"3": "no IMEI info for query 3th party service",
+			"4": "unknow check method",
+			"1460": "timeout"
+		}
+	},
+	{
+		"moduleName": "readStolen",
+		"description": "Query server for stolen info.",
+		"estimatedTime": "10",
+		"_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios",
 			"android"
 		],
 		"input": {
-			"sendFTResultOverWifi": "true",
+			"checkMethod4iOS": "recipe",
+			"_checkMethod4iOS": "recipe, GSMA",
+			"checkMethod4Android": "recipe",
+			"_checkMethod4Android": "recipe, GSMA",
+			"retryTimeWhenFail": "1",
+			"retryInterval": "5",
+			"moduleTimeout": "300",
+			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+		},
+		"successCodes": [
+			"0"
+		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+		"_result_description": {
+			"-1": "exception",
+			"0": "read stolen info false",
+			"1": "read stolen info true",
+			"2": "read stolen info Unknown",
+			"3": "no IMEI info for query 3th party service",
+			"4": "unknow check method",
+			"1460": "timeout"
+		}
+	},
+	{
+		"moduleName": "functionTest",
+		"description": "functionTest feature.",
+		"estimatedTime": "180",
+		"_estimatedTime": "This depends on the user's response time, as well as the test items configured for the application and profile used for functional testing.",
+		"supportPlatforms": [
+			"ios",
+			"android"
+		],
+		"input": {
 			"additionalTestFile": "",
 			"appComeFrom": "FDServer",
 			"_appComeFrom": "FDServer, ModuleParam",
-			"appProfileComeFrom": "MakeModel, ModuleParam",
+			"appProfileComeFrom": "MakeModel",
 			"_appProfileComeFrom": "MakeModel, ModuleParam",
-			"iosApp": "%apsthome%/function_test/FunctionTestApp/ios/FunctionTest.ipa",
+			"iosApp": "",
 			"ardApp": "",
-			"iosProfile": "%apsthome%/function_test/CRTC_IOS Default.zip",
+			"iosProfile": "",
 			"ardProfile": "",
 			"stopAndWaitUserResponse": "false",
 			"retryTimeWhenFail": "1",
@@ -511,29 +569,31 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, install function test and read out function test rsult success",
-			"1": "failure, install function test failure",
-			"2": "failure, iOS device, device under recovery mode",
-			"3": "failure, iOS device, read version or active info fail",
-			"4": "failure, iOS device, iOS version too low",
-			"5": "failure, iOS device, device under unactivated status",
-			"6": "failure, ft app is not exist",
-			"7": "failure, ft profile is not exist",
-			"8": "failure, create tmp file failure",
-			"9": "failure, create zip file function_test.zip fail",
-			"10": "failure, install FT app failure",
-			"11": "failure, put zip file to device fail",
-			"12": "failure, not read out function test result",
-			"13": "failure, no UDID, device may not under normal mode",
-			"14": "failure, no SN for android device",
-			"15": "failure, device disconnected",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "install function test and read out function test rsult success",
+			"1": "install function test failure",
+			"2": "iOS device, device under recovery mode",
+			"3": "iOS device, read version or active info fail",
+			"4": "iOS device, iOS version too low",
+			"5": "iOS device, device under unactivated status",
+			"6": "ft app is not exist",
+			"7": "ft profile is not exist",
+			"8": "create tmp file failure",
+			"9": "create zip file function_test.zip fail",
+			"10": "install FT app failure",
+			"11": "put zip file to device fail",
+			"12": "not read out function test result",
+			"13": "no UDID, device may not under normal mode",
+			"14": "no SN for android device",
+			"15": "device disconnected",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "installWifiProfile",
 		"description": "install wifi prfile feature.",
+		"estimatedTime": "10",
+		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios",
 			"android"
@@ -554,18 +614,21 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, install wifi profile to device success",
-			"1": "failure, install wifi profile to device failure",
-			"2": "failure, some wifi profile not exist",
-			"3": "failure, no UDID, device may not under normal mode",
-			"4": "failure, no SN for android device",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "install wifi profile to device success",
+			"1": "install wifi profile to device failure",
+			"2": "no wifi profile not exist",
+			"3": "merge wifi profile to 1 file failure",
+			"4": "no UDID, device may not under normal mode",
+			"5": "no SN for android device",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "installApps",
 		"description": "install apps feature.",
+		"estimatedTime": "10",
+		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios",
 			"android"
@@ -586,24 +649,44 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, install apps to device success",
-			"1": "failure, install apps to device failure",
-			"2": "failure, some apps not exist",
-			"3": "failure, no UDID, device may not under normal mode",
-			"4": "failure, no SN for android device",
-			"5": "failure, get permission for fdbox apk failure",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "install apps to device success",
+			"1": "install apps to device failure",
+			"2": "some apps not exist",
+			"3": "no UDID, device may not under normal mode",
+			"4": "no SN for android device",
+			"5": "get permission for fdbox apk failure",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "runExes",
 		"description": "run exe feature.",
+		"estimatedTime": "10",
+		"_estimatedTime": "It depends on the execution time of the EXE.",
 		"supportPlatforms": [],
 		"input": {
 			"exes": [
 				"%apsthome%/3party/exes/fdInstallApp.exe -deviceos=Apple -label=%label% -udid=%udid%"
 			],
+			"_exe_param": {
+				"ios": [
+					"%label%",
+					"%udid%",
+					"%phonetype%",
+					"%hubname%",
+					"%hubport%"
+				],
+				"android": [
+					"%label%",
+					"%sn%",
+					"%maker%",
+					"%model%",
+					"%hubname%",
+					"%hubport%"
+				]
+			},
+			"_exe_return": "exe return 0, treat as success",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "300",
@@ -614,16 +697,18 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, run exes success",
-			"1": "failure, run exes failure",
-			"2": "failure, some exes not exist",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "run exes success",
+			"1": "run exes failure",
+			"2": "some exes not exist",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "userAction",
 		"description": "ask user do something.",
+		"estimatedTime": "30",
+		"_estimatedTime": "It depends on the user's response time",
 		"supportPlatforms": [],
 		"input": {
 			"actionKey": "action_remove_simcard",
@@ -639,17 +724,19 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, user response yes",
-			"1": "success, user response no",
-			"2": "failure, user response cancel",
-			"3": "failure, user response wrong_msg, eg: the user is asked to remove the SIM card, but believes the device does not have a SIM card at all.",
-			"1460": "failure, timeout or reach maximum retry times"
+			"-1": "exception",
+			"0": "user response yes",
+			"1": "user response no",
+			"2": "user response cancel",
+			"3": "user response wrong_msg, eg: the user is asked to remove the SIM card, but believes the device does not have a SIM card at all.",
+			"1460": "timeout or reach maximum retry times"
 		}
 	},
 	{
 		"moduleName": "deepClean",
 		"description": "deep clean device.",
+		"estimatedTime": "3600",
+		"_estimatedTime": "This depends on the device's storage capacity. For iOS devices, it typically takes 60 minutes or longer; for Android devices, it usually takes around 10 minutes.",
 		"supportPlatforms": [
 			"ios",
 			"android"
@@ -666,17 +753,19 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, deep clean device success",
-			"1": "failure, deep clean device failure",
-			"2": "failure, no UDID, device may not under normal mode",
-			"3": "failure, not get SN of android device",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "deep clean device success",
+			"1": "deep clean device failure",
+			"2": "no UDID, device may not under normal mode",
+			"3": "not get SN of android device",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "refurbish",
 		"description": "refurbish device.",
+		"estimatedTime": "600",
+		"_estimatedTime": "For iOS devices, the specific time required depends on the device model and iOS version, but it typically takes 10 minutes; for Android devices, it is usually about 2 to 3 minutes. The time spent waiting for the device to restart and be detected by the system is included in the aforementioned estimated durations.",
 		"supportPlatforms": [
 			"ios",
 			"android"
@@ -709,17 +798,19 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, refurbish device success",
-			"1": "failure, refurbish device failure",
-			"2": "failure, ipsw or dmg file is not exist",
-			"3": "failure, no SN for android device",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "refurbish device success",
+			"1": "refurbish device failure",
+			"2": "ipsw or dmg file is not exist",
+			"3": "no SN for android device",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "powerDevice",
 		"description": "power device.",
+		"estimatedTime": "3",
+		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios"
 		],
@@ -736,18 +827,20 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, power off device success",
-			"1": "failure, power off device failure",
-			"2": "failure, not iOS device",
-			"3": "failure, iOS device, device under recovery mode",
-			"4": "failure, no UDID, device may not under normal mode",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "power off device success",
+			"1": "power off device failure",
+			"2": "not iOS device",
+			"3": "iOS device, device under recovery mode",
+			"4": "no UDID, device may not under normal mode",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "activeDevice",
 		"description": "active device.",
+		"estimatedTime": "10",
+		"_estimatedTime": "Depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios"
 		],
@@ -762,23 +855,25 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, active device success",
-			"1": "failure, active device failure",
-			"2": "failure, not iOS device",
-			"3": "failure, no UDID, device may not under normal mode",
-			"4": "failure, active device failure - reason found FMI",
-			"5": "failure, active device failure - reason wrong sim card",
-			"6": "failure, active device failure - reason need to select carrier",
-			"7": "failure, active device failure - reason demo phone",
-			"8": "failure, active device failure - reason phone issue",
-			"9": "failure, active device failure - reason network issue",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "active device success",
+			"1": "active device failure",
+			"2": "not iOS device",
+			"3": "no UDID, device may not under normal mode",
+			"4": "active device failure - reason found FMI",
+			"5": "active device failure - reason wrong sim card",
+			"6": "active device failure - reason need to select carrier",
+			"7": "active device failure - reason demo phone",
+			"8": "active device failure - reason phone issue",
+			"9": "active device failure - reason network issue",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "skipWelcome",
 		"description": "skip welcome.",
+		"estimatedTime": "10",
+		"_estimatedTime": "Depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios"
 		],
@@ -794,19 +889,21 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, skip welcome screen success",
-			"1": "failure, skip welcome screen failure",
-			"2": "failure, no UDID, device may not under normal mode",
+			"-1": "exception",
+			"0": "skip welcome screen success",
+			"1": "skip welcome screen failure",
+			"2": "no UDID, device may not under normal mode",
 			"3": "not support android",
 			"4": "This device must be confgured using the Device Enrollment Program",
 			"5": "A cloud configuration is already present on this device",
-			"1460": "failure, timeout"
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "queryDMServer",
 		"description": "query DM Server.",
+		"estimatedTime": "10",
+		"_estimatedTime": "Depends on network conditions and server response speed.",
 		"supportPlatforms": [],
 		"input": {
 			"queryDMKey": "",
@@ -818,16 +915,18 @@
 		"successCodes": [],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"assignedOutput": "success, return the value of key assignedOutput from server response data",
-			"1": "failure, not found key assignedOutput",
-			"2": "failure, no query dm key in input params, wrong flow config",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"assignedOutput": "return the value of key assignedOutput from server response data",
+			"1": "not found key assignedOutput",
+			"2": "no query dm key in input params, wrong flow config",
+			"1460": "timeout"
 		}
 	},
 	{
 		"moduleName": "installRADI",
 		"description": "install radi.",
+		"estimatedTime": "30",
+		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios",
 			"android"
@@ -843,10 +942,10 @@
 		],
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
-			"-1": "failure, exception",
-			"0": "success, install radi success",
-			"1": "failure, install radi failure",
-			"1460": "failure, timeout"
+			"-1": "exception",
+			"0": "install radi success",
+			"1": "install radi failure",
+			"1460": "timeout"
 		}
 	}
 ]

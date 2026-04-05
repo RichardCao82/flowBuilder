@@ -1,5 +1,5 @@
 {
-  "signature": "generated-1774632104533",
+  "signature": "generated-1775101813634",
   "description": "Full_Flow 流程",
   "flowName": "Full_Flow",
   "flowEstimationTime": "3600",
@@ -10,7 +10,7 @@
       "description": "A UI window pops up, prompting the user to enter data.",
       "input": {
         "manualInputKey": "abc",
-        "_manualInputKey": "A list of valid keys needs to be provided to the UI.",
+        "_manualInputKey": "A list of valid keys needs to be provided to the flow builder.",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
         "moduleTimeout": "60",
@@ -37,7 +37,8 @@
         "1",
         "2",
         "3"
-      ]
+      ],
+      "supportPlatforms": []
     },
     {
       "moduleName": "dataCheck",
@@ -63,6 +64,9 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios"
       ]
     },
     {
@@ -94,6 +98,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -121,7 +129,8 @@
       },
       "successCodes": [
         "case0"
-      ]
+      ],
+      "supportPlatforms": []
     },
     {
       "moduleName": "readFMI",
@@ -149,6 +158,9 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios"
       ]
     },
     {
@@ -175,6 +187,9 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios"
       ]
     },
     {
@@ -201,6 +216,9 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios"
       ]
     },
     {
@@ -227,6 +245,9 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios"
       ]
     },
     {
@@ -253,6 +274,9 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "android"
       ]
     },
     {
@@ -308,6 +332,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -336,6 +364,9 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios"
       ]
     },
     {
@@ -364,6 +395,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -392,6 +427,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -425,6 +464,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -456,6 +499,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -487,6 +534,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -516,7 +567,8 @@
       },
       "successCodes": [
         "0"
-      ]
+      ],
+      "supportPlatforms": []
     },
     {
       "moduleName": "condition",
@@ -543,7 +595,8 @@
       },
       "successCodes": [
         "case0"
-      ]
+      ],
+      "supportPlatforms": []
     },
     {
       "moduleName": "userAction",
@@ -572,7 +625,8 @@
       },
       "successCodes": [
         "0"
-      ]
+      ],
+      "supportPlatforms": []
     },
     {
       "moduleName": "deepClean",
@@ -599,6 +653,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -642,6 +700,10 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios",
+        "android"
       ]
     },
     {
@@ -670,6 +732,9 @@
       },
       "successCodes": [
         "0"
+      ],
+      "supportPlatforms": [
+        "ios"
       ]
     },
     {
@@ -696,7 +761,8 @@
       "gotoModule": {
         "case0": "activeDevice_2",
         "others": ""
-      }
+      },
+      "supportPlatforms": []
     },
     {
       "moduleName": "activeDevice",
@@ -730,7 +796,10 @@
       "gotoModule": {
         "0": "skipWelcome_3",
         "others": ""
-      }
+      },
+      "supportPlatforms": [
+        "ios"
+      ]
     },
     {
       "moduleName": "skipWelcome",
@@ -761,7 +830,10 @@
       "gotoModule": {
         "0": "powerDevice_22",
         "others": ""
-      }
+      },
+      "supportPlatforms": [
+        "ios"
+      ]
     },
     {
       "moduleName": "installRADI",
@@ -787,7 +859,11 @@
       "gotoModule": {
         "0": "condition_checkPlatform1",
         "others": ""
-      }
+      },
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ]
     },
     {
       "moduleName": "queryDMServer",
@@ -814,7 +890,8 @@
       "gotoModule": {
         "abcd": "readStolen_12",
         "others": ""
-      }
+      },
+      "supportPlatforms": []
     }
   ]
 }

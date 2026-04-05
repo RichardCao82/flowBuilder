@@ -1,0 +1,161 @@
+[
+	{
+		"_comment_module_1": "The units for the \"retryInterval\", \"moduleTimeout\" and \"batteryChargeTime\" fields are seconds.",
+		"_comment_module_2": "Entering \"-1\" in the \"moduleTimeout\", \"batteryChargeTime\" and \"retryTimeWhenFail\" fields indicates \"indefinite.\"",
+		"_comment_module_3": "The \"successCodes\" field is an empty list, indicating that all error codes are considered to represent successful execution of this module.",
+		"_comment_module_4": "The \"supportPlatforms\" field is an empty list, indicating that this module is not associated with any platforms.",
+		"_comment_flow_1": "A \"moduleUIName\" field must be created for each module in the flow, and this name must be unique.",
+		"_comment_flow_2": "A \"gotoModule\" field must be created for each module in the flow, and this field must contain a field named \"others\"."
+	},
+	{
+		"moduleUIName": "Outbound",
+		"moduleName": "Group",
+		"description": "this is shell module for grouping other modules, it has no actual execution logic.",
+		"supportPlatforms": [],
+		"input": {
+			"subModules": [
+				{
+					"moduleUIName": "activeDevice_Outbound",
+					"moduleName": "activeDevice",
+					"description": "active device.",
+					"supportPlatforms": [
+						"ios"
+					],
+					"input": {
+						"retryTimeWhenFail": "1",
+						"retryInterval": "5",
+						"moduleTimeout": "180",
+						"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+					},
+					"successCodes": [
+						"0",
+						"2"
+					],
+					"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+					"_result_description": {
+						"-1": "exception",
+						"0": "active device success",
+						"1": "active device failure",
+						"2": "not iOS device",
+						"3": "no UDID, device may not under normal mode",
+						"4": "active device failure - reason found FMI",
+						"5": "active device failure - reason wrong sim card",
+						"6": "active device failure - reason need to select carrier",
+						"7": "active device failure - reason demo phone",
+						"8": "active device failure - reason phone issue",
+						"9": "active device failure - reason network issue",
+						"1460": "timeout"
+					},
+					"gotoModule": {
+						"0": "skipWelcome_Outbound",
+						"2": "skipWelcome_Outbound",
+						"others": "skipWelcome_Outbound"
+					}
+				},
+				{
+					"moduleUIName": "skipWelcome_Outbound",
+					"moduleName": "skipWelcome",
+					"description": "skip welcome.",
+					"supportPlatforms": [
+						"ios"
+					],
+					"input": {
+						"skipScreen": "FFFFFFFFFFFFFFFF",
+						"retryTimeWhenFail": "1",
+						"retryInterval": "5",
+						"moduleTimeout": "180",
+						"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+					},
+					"successCodes": [
+						"0",
+						"3"
+					],
+					"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+					"_result_description": {
+						"-1": "exception",
+						"0": "skip welcome screen success",
+						"1": "skip welcome screen failure",
+						"2": "no UDID, device may not under normal mode",
+						"3": "not support android",
+						"4": "This device must be confgured using the Device Enrollment Program",
+						"5": "A cloud configuration is already present on this device",
+						"1460": "timeout"
+					},
+					"gotoModule": {
+						"0": "powerDevice_Outbound",
+						"3": "powerDevice_Outbound",
+						"others": "powerDevice_Outbound"
+					}
+				},
+				{
+					"moduleUIName": "powerDevice_Outbound",
+					"moduleName": "powerDevice",
+					"description": "power device.",
+					"supportPlatforms": [
+						"ios"
+					],
+					"input": {
+						"method": "powerOff",
+						"_method": "powerOff, reboot",
+						"retryTimeWhenFail": "1",
+						"retryInterval": "5",
+						"moduleTimeout": "180",
+						"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+					},
+					"successCodes": [
+						"0",
+						"2"
+					],
+					"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+					"_result_description": {
+						"-1": "exception",
+						"0": "power off device success",
+						"1": "power off device failure",
+						"2": "not iOS device",
+						"3": "iOS device, device under recovery mode",
+						"4": "no UDID, device may not under normal mode",
+						"1460": "timeout"
+					},
+					"gotoModule": {
+						"others": ""
+					}
+				}
+			],
+			"_subModules": "A list of sub modules to be executed in this group, the execution order is from top to bottom. The sub module can be any module including Group module, but it should not be the module itself or its upstream modules, otherwise it will cause cyclic call.",
+			"retryTimeWhenFail": "1",
+			"retryInterval": "5",
+			"moduleTimeout": "3600",
+			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. Execution will resume after waiting for a UI response message."
+		},
+		"codesDefine": {
+			"group_success": {
+				"activeDevice_Outbound": [
+					"0",
+					"2"
+				],
+				"skipWelcome_Outbound": [
+					"0",
+					"3"
+				],
+				"powerDevice_Outbound": [
+					"0",
+					"2"
+				]
+			},
+			"_comment": "will only consider the submodules that have been executed, if all of their execution results are in the defined success codes, then it is considered as group_success, otherwise it is considered as others. If a submodule does not have defined success codes, then any execution result of this submodule will be considered as success for this submodule."
+		},
+		"successCodes": [
+			"group_success"
+		],
+		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+		"_result_description": {
+			"group_success": "define is codesDefine field",
+			"group_failure": "define is codesDefine field",
+			"1460": "timeout or reach maximum retry times"
+		},
+		"gotoModule": {
+			"group_success": "",
+			"others": ""
+		}
+	}
+]

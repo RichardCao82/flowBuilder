@@ -516,7 +516,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // 如果 module.input 中没有该参数，则使用参数定义中的 default 值
                     if (module.input[key] === undefined && paramDef.default !== undefined) {
-                        module.input[key] = paramDef.default;
+                        if (paramDef.type === 'Array') {
+                            module.input[key] = parseArrayFromDisplay(paramDef.default);
+                        } else {
+                            module.input[key] = paramDef.default;
+                        }
                     }
 
                     renderParameterInput(key, paramDef, module.input, container, 0, module); // 渲染参数输入，传递 module 对象
@@ -615,6 +619,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 updateModuleDetailsAndRender();
             });
             wrapperDiv.appendChild(select);
+        } else if (paramDef.type === 'Array') {
+            const input = document.createElement('input');
+            input.type = 'text';
+
+            if (!Array.isArray(dataObject[paramKey])) {
+                dataObject[paramKey] = parseArrayFromDisplay(dataObject[paramKey]);
+            }
+
+            input.value = formatArrayForDisplay(dataObject[paramKey]);
+            input.placeholder = '例如: item1,item2,item3';
+            input.addEventListener('change', (e) => {
+                dataObject[paramKey] = parseArrayFromDisplay(e.target.value);
+                e.target.value = formatArrayForDisplay(dataObject[paramKey]);
+                updateModuleDetailsAndRender();
+            });
+            wrapperDiv.appendChild(input);
         } else if (typeof paramDef === 'object' && paramDef !== null && !Array.isArray(paramDef)) {
             // 如果是嵌套对象，递归渲染
             // 确保 dataObject 中有对应的子对象
@@ -838,6 +858,30 @@ document.addEventListener('DOMContentLoaded', () => {
             .split(',')
             .map(item => item.trim())
             .filter(item => item !== '');
+    }
+
+    function parseArrayFromDisplay(value) {
+        if (Array.isArray(value)) {
+            return value
+                .map(item => String(item).trim())
+                .filter(item => item !== '');
+        }
+
+        if (typeof value !== 'string') {
+            return [];
+        }
+
+        return value
+            .split(',')
+            .map(item => item.trim())
+            .filter(item => item !== '');
+    }
+
+    function formatArrayForDisplay(value) {
+        if (!Array.isArray(value)) {
+            return '';
+        }
+        return value.join(',');
     }
 
     function formatSuccessCodesForDisplay(successCodes) {
