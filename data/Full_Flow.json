@@ -1,5 +1,5 @@
 {
-  "signature": "generated-1775101813634",
+  "signature": "generated-1775529973883",
   "description": "Full_Flow 流程",
   "flowName": "Full_Flow",
   "flowEstimationTime": "3600",
@@ -8,29 +8,16 @@
     {
       "moduleName": "manualInput",
       "description": "A UI window pops up, prompting the user to enter data.",
+      "estimatedTime": "60",
+      "_estimatedTime": "It depends on the user's response time and the configuration of the input fields.",
+      "supportPlatforms": [],
       "input": {
-        "manualInputKey": "abc",
+        "manualInputKey": "",
         "_manualInputKey": "A list of valid keys needs to be provided to the flow builder.",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "600",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. Execution will resume after waiting for a UI response message."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "manualInput_UserID",
-      "x": 235,
-      "y": 52,
-      "gotoModule": {
-        "0": "dataCheck_2",
-        "1": "dataCheck_2",
-        "2": "dataCheck_2",
-        "3": "dataCheck_2",
-        "others": ""
       },
       "successCodes": [
         "0",
@@ -38,42 +25,36 @@
         "2",
         "3"
       ],
-      "supportPlatforms": []
-    },
-    {
-      "moduleName": "dataCheck",
-      "description": "Check if the equipment is clean.",
-      "input": {
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. Execution will resume after waiting for a UI response message."
-      },
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
       "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
+        "0": "user response yes",
+        "1": "user response no",
+        "2": "user response cancel",
+        "3": "user response wrong_msg",
+        "4": "no manualInputKey in input params, wrong flow config",
+        "1460": "timeout or reach maximum retry times",
+        "-1": "exception"
       },
-      "moduleUIName": "dataCheck_2",
-      "x": 262,
-      "y": 128,
+      "moduleUIName": "manualInput_UserID",
+      "x": 109,
+      "y": 65,
       "gotoModule": {
-        "0": "",
-        "others": "checkBatteryLevel_3"
-      },
-      "successCodes": [
-        "0"
-      ],
-      "supportPlatforms": [
-        "ios"
-      ]
+        "0": "checkBatteryLevel_2",
+        "1": "checkBatteryLevel_2",
+        "2": "checkBatteryLevel_2",
+        "3": "checkBatteryLevel_2",
+        "others": "checkBatteryLevel_2"
+      }
     },
     {
-      "moduleUIName": "checkBatteryLevel_3",
-      "_moduleUIName": "The UI displays this name to the user, and it must be unique throughout the entire flow.",
       "moduleName": "checkBatteryLevel",
+      "estimatedTime": "60",
+      "_estimatedTime": "This depends on the device's current battery level, the target battery level set in the input, and the device's charging speed.",
       "description": "check battery level of the device on a specific USB port",
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ],
       "input": {
         "batteryTargetLevel": "30",
         "batteryChargeTime": "600",
@@ -82,206 +63,258 @@
         "moduleTimeout": "700",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
       },
-      "result_description": {
-        "0": "success, battery level reach target battery level",
-        "1": "failure, battery level is not reach target battery level - reach maximum waiting time",
-        "2": "failure, no UDID for iOS device, device may not under normal mode",
-        "3": "failure, no SN for android device",
-        "4": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "x": 237,
-      "y": 208,
-      "gotoModule": {
-        "0": "condition_checkPlatform",
-        "others": ""
-      },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios",
-        "android"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "battery level reach target battery level",
+        "1": "battery level is not reach target battery level - reach maximum waiting time or reach maximum retry times",
+        "2": "no UDID, device may not under normal mode",
+        "3": "no SN for android device",
+        "1460": "flow set module maximum wait time reached, but device did not reach target battery level",
+        "-1": "exception"
+      },
+      "moduleUIName": "checkBatteryLevel_2",
+      "x": 102,
+      "y": 152,
+      "gotoModule": {
+        "0": "condition_checkPlatform",
+        "others": ""
+      }
     },
     {
       "moduleName": "condition",
       "description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+      "estimatedTime": "1",
+      "_estimatedTime": "should be less 1 second, as it is only for checking some conditions and then jump to the target module, there is no actual execution logic in this module.",
+      "supportPlatforms": [],
       "input": {
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. If none of the conditions are met, the current process will terminate immediately.",
         "conditions": {
           "case0": {
             "op": "EQ",
             "field": "DeviceType",
             "value": "iOS"
           }
-        }
-      },
-      "moduleUIName": "condition_checkPlatform",
-      "x": 218,
-      "y": 289,
-      "gotoModule": {
-        "case0": "readFMI_5",
-        "others": "readFMMFRPKME_9"
+        },
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60"
       },
       "successCodes": [
         "case0"
       ],
-      "supportPlatforms": []
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "1460": "flow set module maximum wait time reached",
+        "-1": "exception",
+        "caseName": "match a case, return the case name, eg: case0",
+        "others": "not match any case"
+      },
+      "moduleUIName": "condition_checkPlatform",
+      "x": 92,
+      "y": 234,
+      "gotoModule": {
+        "case0": "dataCheck_4",
+        "others": "readFMMFRPKME_10"
+      }
+    },
+    {
+      "moduleName": "dataCheck",
+      "description": "Check if the equipment is clean.",
+      "estimatedTime": "10",
+      "_estimatedTime": "",
+      "supportPlatforms": [
+        "ios"
+      ],
+      "input": {
+        "howManyLatestVersionSupportFastClear": "all",
+        "_howManyLatestVersionSupportFastClear": "all: Indicates any version. 1: Indicates only the latest version. 2: Indicates the latest version and the previous latest version.",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "300",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "successCodes": [
+        "0"
+      ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "device match data check definition",
+        "1": "device does NOT match data check definition",
+        "2": "not iOS device",
+        "3": "iOS Version is not allow to do fast clear",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "dataCheck_4",
+      "x": 120,
+      "y": 318,
+      "gotoModule": {
+        "0": "readFMI_5",
+        "others": ""
+      }
     },
     {
       "moduleName": "readFMI",
       "description": "Check if the equipment is lock by FMI.",
+      "estimatedTime": "10",
+      "_estimatedTime": "In most cases, using device-side methods takes less than 10 seconds, whereas the time required to query third-party services depends on network conditions and server response speed.",
+      "supportPlatforms": [
+        "ios"
+      ],
       "input": {
         "checkMethod": "device",
         "_checkMethod": "device, forensic, prolog, ecoATM",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "300",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. This device method may activate it."
       },
+      "successCodes": [
+        "0"
+      ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
       "_result_description": {
-        "0": "success, get FMI info",
-        "1": "failure, do not get FMI info",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
+        "0": "read FMI info UnLocked",
+        "1": "read FMI info Locked",
+        "2": "read FMI info Unknown",
+        "3": "not iOS device",
+        "4": "no UDID, device may not under normal mode",
+        "5": "no IMEI info for query 3th party service",
+        "1460": "timeout",
+        "-1": "exception"
       },
       "moduleUIName": "readFMI_5",
-      "x": 251,
-      "y": 370,
+      "x": 107,
+      "y": 405,
       "gotoModule": {
-        "0": "readDEP_6",
+        "0": "readDEP_8",
         "others": ""
-      },
-      "successCodes": [
-        "0"
-      ],
-      "supportPlatforms": [
-        "ios"
-      ]
-    },
-    {
-      "moduleName": "readDEP",
-      "description": "Check if the equipment is lock by DEP.",
-      "input": {
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, get DEP info",
-        "1": "failure, do not get DEP info",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "readDEP_6",
-      "x": 251,
-      "y": 449,
-      "gotoModule": {
-        "0": "readComponents_7",
-        "others": ""
-      },
-      "successCodes": [
-        "0"
-      ],
-      "supportPlatforms": [
-        "ios"
-      ]
+      }
     },
     {
       "moduleName": "readComponents",
       "description": "Read the iOS components info",
+      "estimatedTime": "240",
+      "_estimatedTime": "",
+      "supportPlatforms": [
+        "ios"
+      ],
       "input": {
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
         "moduleTimeout": "600",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
       },
-      "_result_description": {
-        "0": "success, get DEP info",
-        "1": "failure, do not get DEP info",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "readComponents_7",
-      "x": 222,
-      "y": 531,
-      "gotoModule": {
-        "0": "fastClean_8",
-        "others": ""
-      },
       "successCodes": [
-        "0"
+        "0",
+        "1",
+        "2"
       ],
-      "supportPlatforms": [
-        "ios"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "check if component is replaced of the device success, all component is genuine",
+        "1": "check if component is replaced of the device success, found some of component is replaced",
+        "2": "check if component is replaced of the device success, found some of component is unknown",
+        "3": "check if component is replaced of the device failure",
+        "4": "not iOS device",
+        "5": "no UDID, device may not under normal mode",
+        "6": "device is old and not qualify for log check",
+        "1460": "module timeout quit",
+        "-1": "exception"
+      },
+      "moduleUIName": "readComponents_6",
+      "x": 111,
+      "y": 567,
+      "gotoModule": {
+        "0": "fastClean_7",
+        "1": "fastClean_7",
+        "2": "fastClean_7",
+        "others": ""
+      }
     },
     {
       "moduleName": "fastClean",
       "description": "fastClean Device.",
-      "input": {
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "fastClean_8",
-      "x": 247,
-      "y": 611,
-      "gotoModule": {
-        "0": "checkBatteryHealth_10",
-        "others": ""
-      },
-      "successCodes": [
-        "0"
-      ],
+      "estimatedTime": "100",
+      "_estimatedTime": "The fastClean operation should be completed within 5 seconds; the remaining time is allocated for waiting for the device to restart and be detected.",
       "supportPlatforms": [
         "ios"
-      ]
-    },
-    {
-      "moduleName": "readFMMFRPKME",
-      "description": "Check if the equipment is LOCKED by FMM,FRP,KME.",
+      ],
       "input": {
+        "howManyLatestVersionSupportFastClear": "all",
+        "_howManyLatestVersionSupportFastClear": "all: Indicates any version. 1: Indicates only the latest version. 2: Indicates the latest version and the previous latest version.",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "300",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, get lock info success",
-        "1": "failure, get lock info failure",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "readFMMFRPKME_9",
-      "x": 419,
-      "y": 366,
-      "gotoModule": {
-        "0": "checkBatteryHealth_10",
-        "others": ""
       },
       "successCodes": [
         "0"
       ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "fast clean device success",
+        "1": "fast clean device failure",
+        "2": "not iOS device",
+        "3": "no UDID, device may not under normal mode",
+        "4": "iOS Version is not allow to do fast clear",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "fastClean_7",
+      "x": 131,
+      "y": 652,
+      "gotoModule": {
+        "0": "checkBatteryHealth_9",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "readDEP",
+      "description": "Check if the equipment is lock by DEP.",
+      "estimatedTime": "150",
+      "_estimatedTime": "The specific duration depends on the device's status and the detection method used. In a worst-case scenario—specifically, when the device first requires a \"FastClean\" operation—the entire process may take over 150 seconds, as this period may involve waiting for the device to restart and be re-recognized by the system.",
       "supportPlatforms": [
-        "android"
-      ]
+        "ios"
+      ],
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "300",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "successCodes": [
+        "0"
+      ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "read DEP info UnLocked",
+        "1": "read DEP info Locked",
+        "2": "read DEP info Unknown",
+        "3": "not iOS device",
+        "4": "no UDID, device may not under normal mode",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "readDEP_8",
+      "x": 127,
+      "y": 489,
+      "gotoModule": {
+        "0": "readComponents_6",
+        "others": ""
+      }
     },
     {
       "moduleName": "checkBatteryHealth",
       "description": "Check the health of the device's battery.",
+      "estimatedTime": "10",
+      "_estimatedTime": "",
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ],
       "input": {
         "iOSParam": {
           "default": {
@@ -314,165 +347,307 @@
         },
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "600",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "checkBatteryHealth_10",
-      "x": 404,
-      "y": 675,
-      "gotoModule": {
-        "0": "readSIMLock_11",
-        "others": ""
       },
       "successCodes": [
         "0"
       ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "battery is healthy",
+        "1": "battery is not healthy",
+        "2": "no UDID, device may not under normal mode",
+        "3": "no SN for android device",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "checkBatteryHealth_9",
+      "x": 279,
+      "y": 719,
+      "gotoModule": {
+        "0": "readSIMLock_11",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "readFMMFRPKME",
+      "description": "Check if the equipment is LOCKED by FMM,FRP,KME.",
+      "estimatedTime": "120",
+      "_estimatedTime": "",
       "supportPlatforms": [
-        "ios",
         "android"
-      ]
+      ],
+      "input": {
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "300",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "successCodes": [
+        "0"
+      ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "device is not Locked by FMM, FRP, or KME",
+        "1": "not android device",
+        "2": "not get SN of android device",
+        "3": "FMM is Locked, FRP is Locked, KME is Locked",
+        "4": "FMM is Locked, FRP is Locked, KME is UnLocked",
+        "5": "FMM is Locked, FRP is Locked, KME is Unknown",
+        "6": "FMM is Locked, FRP is UnLocked, KME is Locked",
+        "7": "FMM is Locked, FRP is UnLocked, KME is UnLocked",
+        "8": "FMM is Locked, FRP is UnLocked, KME is Unknown",
+        "9": "FMM is Locked, FRP is Unknown, KME is Locked",
+        "10": "FMM is Locked, FRP is Unknown, KME is UnLocked",
+        "11": "FMM is Unknown, FRP is Locked, KME is UnLocked",
+        "12": "FMM is UnLocked, FRP is Locked, KME is Locked",
+        "13": "FMM is UnLocked, FRP is Locked, KME is UnLocked",
+        "14": "FMM is UnLocked, FRP is Locked, KME is Unknown",
+        "15": "FMM is UnLocked, FRP is UnLocked, KME is Locked",
+        "16": "FMM is UnLocked, FRP is UnLocked, KME is Unknown",
+        "17": "FMM is UnLocked, FRP is Unknown, KME is Locked",
+        "18": "FMM is UnLocked, FRP is Unknown, KME is UnLocked",
+        "19": "FMM is UnLocked, FRP is Unknown, KME is Unknown",
+        "20": "FMM is Unknown, FRP is Locked, KME is Locked",
+        "22": "FMM is Unknown, FRP is Locked, KME is Unknown",
+        "23": "FMM is Unknown, FRP is UnLocked, KME is Locked",
+        "24": "FMM is Unknown, FRP is UnLocked, KME is UnLocked",
+        "25": "FMM is Unknown, FRP is UnLocked, KME is Unknown",
+        "26": "FMM is Unknown, FRP is Unknown, KME is Locked",
+        "27": "FMM is Unknown, FRP is Unknown, KME is UnLocked",
+        "28": "FMM is Unknown, FRP is Unknown, KME is Unknown",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "readFMMFRPKME_10",
+      "x": 297,
+      "y": 319,
+      "gotoModule": {
+        "0": "checkBatteryHealth_9",
+        "others": ""
+      }
     },
     {
       "moduleName": "readSIMLock",
       "description": "Query server for SIM LOCK info.",
+      "estimatedTime": "10",
+      "_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
+      "supportPlatforms": [
+        "ios"
+      ],
       "input": {
-        "checkMethod": "forensic",
-        "_checkMethod": "forensic, prolog, ecoATM",
+        "checkMethod4iOS": "forensic",
+        "_checkMethod4iOS": "forensic, prolog, ecoATM",
+        "checkMethod4Android": "",
+        "_checkMethod4Android": "",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "readSIMLock_11",
-      "x": 616,
-      "y": 68,
-      "gotoModule": {
-        "0": "queryDMServer_5",
-        "others": ""
+        "moduleTimeout": "300",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out).",
+        "checkMethod": "forensic"
       },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "read sim lock info UnLocked",
+        "1": "read sim lock info Locked",
+        "2": "read sim lock info Unknown",
+        "3": "no IMEI info for query 3th party service",
+        "4": "unknow check method",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "readSIMLock_11",
+      "x": 554,
+      "y": 48,
+      "gotoModule": {
+        "0": "readStolen_12",
+        "others": ""
+      }
     },
     {
       "moduleName": "readStolen",
       "description": "Query server for stolen info.",
+      "estimatedTime": "10",
+      "_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ],
       "input": {
-        "checkMethod": "recipe",
-        "_checkMethod": "recipe, GSMA",
+        "checkMethod4iOS": "recipe",
+        "_checkMethod4iOS": "recipe, GSMA",
+        "checkMethod4Android": "recipe",
+        "_checkMethod4Android": "recipe, GSMA",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "readStolen_12",
-      "x": 742,
-      "y": 237,
-      "gotoModule": {
-        "0": "queryDeviceFinancialStatus_13",
-        "others": ""
+        "moduleTimeout": "300",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out).",
+        "checkMethod": "recipe"
       },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios",
-        "android"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "read stolen info false",
+        "1": "read stolen info true",
+        "2": "read stolen info Unknown",
+        "3": "no IMEI info for query 3th party service",
+        "4": "unknow check method",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "readStolen_12",
+      "x": 599,
+      "y": 135,
+      "gotoModule": {
+        "0": "queryDeviceFinancialStatus_13",
+        "others": ""
+      }
     },
     {
       "moduleName": "queryDeviceFinancialStatus",
       "description": "Query server for device financial status.",
+      "estimatedTime": "10",
+      "_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ],
       "input": {
-        "checkMethod": "prolog",
-        "_checkMethod": "prolog, ecoATM",
+        "checkMethod4iOS": "prolog",
+        "_checkMethod4iOS": "prolog, ecoATM",
+        "checkMethod4Android": "prolog",
+        "_checkMethod4Android": "prolog, ecoATM",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "queryDeviceFinancialStatus_13",
-      "x": 695,
-      "y": 315,
-      "gotoModule": {
-        "0": "functionTest_14",
-        "others": ""
+        "moduleTimeout": "300",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out).",
+        "checkMethod": "prolog"
       },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios",
-        "android"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "query get info success",
+        "1": "query get info failure",
+        "2": "no IMEI info for query 3th party service",
+        "3": "unknow check method",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "queryDeviceFinancialStatus_13",
+      "x": 567,
+      "y": 222,
+      "gotoModule": {
+        "0": "queryDMServer_14",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "queryDMServer",
+      "description": "query DM Server.",
+      "estimatedTime": "10",
+      "_estimatedTime": "Depends on network conditions and server response speed.",
+      "supportPlatforms": [],
+      "input": {
+        "queryDMKey": "",
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "180",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+      },
+      "successCodes": [
+        "0"
+      ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "1": "not found key assignedOutput",
+        "2": "no query dm key in input params, wrong flow config",
+        "1460": "timeout",
+        "-1": "exception",
+        "assignedOutput": "return the value of key assignedOutput from server response data"
+      },
+      "moduleUIName": "queryDMServer_14",
+      "x": 580,
+      "y": 305,
+      "gotoModule": {
+        "0": "installWifiProfile_16",
+        "others": ""
+      }
     },
     {
       "moduleName": "functionTest",
       "description": "functionTest feature.",
+      "estimatedTime": "180",
+      "_estimatedTime": "This depends on the user's response time, as well as the test items configured for the application and profile used for functional testing.",
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ],
       "input": {
-        "sendFTResultOverWifi": "true",
         "additionalTestFile": "",
-        "app_profileComeFromMakeModel": "false",
-        "iosApp": "%apsthome%/function_test/FunctionTestApp/ios/FunctionTest.ipa",
+        "appComeFrom": "FDServer",
+        "_appComeFrom": "FDServer, ModuleParam",
+        "appProfileComeFrom": "MakeModel",
+        "_appProfileComeFrom": "MakeModel, ModuleParam",
+        "iosApp": "",
         "ardApp": "",
-        "iosProfile": "%apsthome%/function_test/CRTC_IOS Default.zip",
+        "iosProfile": "",
         "ardProfile": "",
+        "stopAndWaitUserResponse": "false",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "functionTest_14",
-      "x": 733,
-      "y": 395,
-      "gotoModule": {
-        "0": "installWifiProfile_15",
-        "others": ""
+        "moduleTimeout": "600",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out).",
+        "sendFTResultOverWifi": "false"
       },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios",
-        "android"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "install function test and read out function test rsult success",
+        "1": "install function test failure",
+        "2": "iOS device, device under recovery mode",
+        "3": "iOS device, read version or active info fail",
+        "4": "iOS device, iOS version too low",
+        "5": "iOS device, device under unactivated status",
+        "6": "ft app is not exist",
+        "7": "ft profile is not exist",
+        "8": "create tmp file failure",
+        "9": "create zip file function_test.zip fail",
+        "10": "install FT app failure",
+        "11": "put zip file to device fail",
+        "12": "not read out function test result",
+        "13": "no UDID, device may not under normal mode",
+        "14": "no SN for android device",
+        "15": "device disconnected",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "functionTest_15",
+      "x": 584,
+      "y": 464,
+      "gotoModule": {
+        "0": "installApps_17",
+        "others": ""
+      }
     },
     {
       "moduleName": "installWifiProfile",
       "description": "install wifi prfile feature.",
+      "estimatedTime": "10",
+      "_estimatedTime": "",
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ],
       "input": {
         "wifiProfileFiles": [
           "%apsthome%/3Party/wifi/RADI_UFO_8.zip",
@@ -481,33 +656,40 @@
         "wifiProfileFolder": "",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "240",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "installWifiProfile_15",
-      "x": 706,
-      "y": 472,
-      "gotoModule": {
-        "0": "installApps_16",
-        "others": ""
       },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios",
-        "android"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "install wifi profile to device success",
+        "1": "install wifi profile to device failure",
+        "2": "no wifi profile not exist",
+        "3": "merge wifi profile to 1 file failure",
+        "4": "no UDID, device may not under normal mode",
+        "5": "no SN for android device",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "installWifiProfile_16",
+      "x": 569,
+      "y": 384,
+      "gotoModule": {
+        "0": "functionTest_15",
+        "others": ""
+      }
     },
     {
       "moduleName": "installApps",
       "description": "install apps feature.",
+      "estimatedTime": "10",
+      "_estimatedTime": "",
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ],
       "input": {
         "appsFiles": [
           "%apsthome%/3Party/apps/ios/radi.ipa",
@@ -516,152 +698,163 @@
         "appsFolder": "",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "240",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. iOS will install all ipa files, android will install all apk files"
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "installApps_16",
-      "x": 666,
-      "y": 548,
-      "gotoModule": {
-        "0": "runExes_17",
-        "others": ""
       },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios",
-        "android"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "install apps to device success",
+        "1": "install apps to device failure",
+        "2": "some apps not exist",
+        "3": "no UDID, device may not under normal mode",
+        "4": "no SN for android device",
+        "5": "get permission for fdbox apk failure",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "installApps_17",
+      "x": 584,
+      "y": 541,
+      "gotoModule": {
+        "0": "runExes_18",
+        "others": ""
+      }
     },
     {
       "moduleName": "runExes",
-      "description": "install apps feature.",
+      "description": "run exe feature.",
+      "estimatedTime": "10",
+      "_estimatedTime": "It depends on the execution time of the EXE.",
+      "supportPlatforms": [],
       "input": {
         "exes": [
           "%apsthome%/3party/exes/fdInstallApp.exe -deviceos=Apple -label=%label% -udid=%udid%"
         ],
+        "_exe_param": {
+          "ios": [
+            "%label%",
+            "%udid%",
+            "%phonetype%",
+            "%hubname%",
+            "%hubport%"
+          ],
+          "android": [
+            "%label%",
+            "%sn%",
+            "%maker%",
+            "%model%",
+            "%hubname%",
+            "%hubport%"
+          ]
+        },
+        "_exe_return": "exe return 0, treat as success",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "300",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "runExes_17",
-      "x": 645,
-      "y": 650,
-      "gotoModule": {
-        "0": "condition_checkSIMCard",
-        "others": ""
       },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": []
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "run exes success",
+        "1": "run exes failure",
+        "2": "some exes not exist",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "runExes_18",
+      "x": 583,
+      "y": 624,
+      "gotoModule": {
+        "0": "condition_checkSIMCard",
+        "others": ""
+      }
     },
     {
       "moduleName": "condition",
       "description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+      "estimatedTime": "1",
+      "_estimatedTime": "should be less 1 second, as it is only for checking some conditions and then jump to the target module, there is no actual execution logic in this module.",
+      "supportPlatforms": [],
       "input": {
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "60",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. If none of the conditions are met, the current process will terminate immediately.",
         "conditions": {
           "case0": {
             "op": "EQ",
             "field": "SimInDevice",
             "value": "true"
           }
-        }
-      },
-      "moduleUIName": "condition_checkSIMCard",
-      "x": 1034,
-      "y": 89,
-      "gotoModule": {
-        "case0": "userAction_removeSIMCard",
-        "others": "deepClean_20"
+        },
+        "retryTimeWhenFail": "1",
+        "retryInterval": "5",
+        "moduleTimeout": "60"
       },
       "successCodes": [
         "case0"
       ],
-      "supportPlatforms": []
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "1460": "flow set module maximum wait time reached",
+        "-1": "exception",
+        "caseName": "match a case, return the case name, eg: case0",
+        "others": "not match any case"
+      },
+      "moduleUIName": "condition_checkSIMCard",
+      "x": 953,
+      "y": 312,
+      "gotoModule": {
+        "case0": "userAction_removeSIMCard",
+        "others": "refurbish_22"
+      }
     },
     {
       "moduleName": "userAction",
       "description": "ask user do something.",
+      "estimatedTime": "30",
+      "_estimatedTime": "It depends on the user's response time",
+      "supportPlatforms": [],
       "input": {
         "actionKey": "action_remove_simcard",
-        "+actionKey": "action_remove_simcard, action_remove_sdcard, action_remove_esim, action_close_tray",
+        "_actionKey": "action_remove_simcard, action_remove_sdcard, action_remove_esim, action_close_tray",
+        "stopAndWaitUserResponse": "true",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
         "moduleTimeout": "600",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out).",
-        "stopAndWaitUserResponse": "true"
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "userAction_removeSIMCard",
-      "x": 976,
-      "y": 258,
-      "gotoModule": {
-        "0": "deepClean_20",
-        "others": ""
-      },
-      "successCodes": [
-        "0"
-      ],
-      "supportPlatforms": []
-    },
-    {
-      "moduleName": "deepClean",
-      "description": "install apps feature.",
-      "input": {
-        "deepCleanMethodName": "OneTime_Rdm",
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "60",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
       },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "deepClean_20",
-      "x": 1185,
-      "y": 319,
-      "gotoModule": {
-        "0": "refurbish_21",
-        "others": ""
-      },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios",
-        "android"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "user response yes",
+        "1": "user response no",
+        "2": "user response cancel",
+        "3": "user response wrong_msg, eg: the user is asked to remove the SIM card, but believes the device does not have a SIM card at all.",
+        "1460": "timeout or reach maximum retry times",
+        "-1": "exception"
+      },
+      "moduleUIName": "userAction_removeSIMCard",
+      "x": 919,
+      "y": 421,
+      "gotoModule": {
+        "0": "refurbish_22",
+        "others": ""
+      }
     },
     {
       "moduleName": "refurbish",
       "description": "refurbish device.",
+      "estimatedTime": "600",
+      "_estimatedTime": "For iOS devices, the specific time required depends on the device model and iOS version, but it typically takes 10 minutes; for Android devices, it is usually about 2 to 3 minutes. The time spent waiting for the device to restart and be detected by the system is included in the aforementioned estimated durations.",
+      "supportPlatforms": [
+        "ios",
+        "android"
+      ],
       "input": {
         "customizeIpsw": {
           "ipswFolder": "",
@@ -682,64 +875,68 @@
         },
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "1800",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "refurbish_21",
-      "x": 1047,
-      "y": 368,
-      "gotoModule": {
-        "0": "installRADI_4",
-        "others": ""
       },
       "successCodes": [
         "0"
       ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "refurbish device success",
+        "1": "refurbish device failure",
+        "2": "ipsw or dmg file is not exist",
+        "3": "no SN for android device",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "refurbish_22",
+      "x": 1122,
+      "y": 491,
+      "gotoModule": {
+        "0": "installRADI_23",
+        "others": ""
+      }
+    },
+    {
+      "moduleName": "installRADI",
+      "description": "install radi.",
+      "estimatedTime": "30",
+      "_estimatedTime": "",
       "supportPlatforms": [
         "ios",
         "android"
-      ]
-    },
-    {
-      "moduleName": "powerDevice",
-      "description": "power off device.",
+      ],
       "input": {
-        "method": "powerOff",
-        "_method": "powerOff, reboot",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "60",
+        "moduleTimeout": "180",
         "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "_result_description": {
-        "0": "success, user input data done",
-        "1": "failure, user cancel input data",
-        "2": "failure, timeout or reach maximum retry times",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "powerDevice_22",
-      "x": 830,
-      "y": 686,
-      "gotoModule": {
-        "0": "",
-        "others": ""
       },
       "successCodes": [
         "0"
       ],
-      "supportPlatforms": [
-        "ios"
-      ]
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "0": "install radi success",
+        "1": "install radi failure",
+        "1460": "timeout",
+        "-1": "exception"
+      },
+      "moduleUIName": "installRADI_23",
+      "x": 1036,
+      "y": 561,
+      "gotoModule": {
+        "0": "condition_24",
+        "others": ""
+      }
     },
     {
       "moduleName": "condition",
       "description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
+      "estimatedTime": "1",
+      "_estimatedTime": "should be less 1 second, as it is only for checking some conditions and then jump to the target module, there is no actual execution logic in this module.",
+      "supportPlatforms": [],
       "input": {
         "conditions": {
           "case0": {
@@ -755,143 +952,173 @@
       "successCodes": [
         "case0"
       ],
-      "moduleUIName": "condition_checkPlatform1",
-      "x": 907,
-      "y": 483,
-      "gotoModule": {
-        "case0": "activeDevice_2",
-        "others": ""
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+      "_result_description": {
+        "1460": "flow set module maximum wait time reached",
+        "-1": "exception",
+        "caseName": "match a case, return the case name, eg: case0",
+        "others": "not match any case"
       },
-      "supportPlatforms": []
+      "moduleUIName": "condition_checkPlatform_1",
+      "x": 889,
+      "y": 641,
+      "gotoModule": {
+        "case0": "Outbound_25",
+        "others": ""
+      }
     },
     {
-      "moduleName": "activeDevice",
-      "description": "active device.",
+      "moduleUIName": "Outbound_25",
+      "moduleName": "Group",
+      "description": "this is shell module for grouping other modules, it has no actual execution logic.",
+      "supportPlatforms": [],
       "input": {
+        "subModules": [
+          {
+            "moduleUIName": "activeDevice_Outbound",
+            "moduleName": "activeDevice",
+            "description": "active device.",
+            "supportPlatforms": [
+              "ios"
+            ],
+            "input": {
+              "retryTimeWhenFail": "1",
+              "retryInterval": "5",
+              "moduleTimeout": "180",
+              "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+            },
+            "successCodes": [
+              "0",
+              "2"
+            ],
+            "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+            "_result_description": {
+              "0": "active device success",
+              "1": "active device failure",
+              "2": "not iOS device",
+              "3": "no UDID, device may not under normal mode",
+              "4": "active device failure - reason found FMI",
+              "5": "active device failure - reason wrong sim card",
+              "6": "active device failure - reason need to select carrier",
+              "7": "active device failure - reason demo phone",
+              "8": "active device failure - reason phone issue",
+              "9": "active device failure - reason network issue",
+              "1460": "timeout",
+              "-1": "exception"
+            },
+            "gotoModule": {
+              "0": "skipWelcome_Outbound",
+              "2": "skipWelcome_Outbound",
+              "others": "skipWelcome_Outbound"
+            }
+          },
+          {
+            "moduleUIName": "skipWelcome_Outbound",
+            "moduleName": "skipWelcome",
+            "description": "skip welcome.",
+            "supportPlatforms": [
+              "ios"
+            ],
+            "input": {
+              "skipScreen": "FFFFFFFFFFFFFFFF",
+              "retryTimeWhenFail": "1",
+              "retryInterval": "5",
+              "moduleTimeout": "180",
+              "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+            },
+            "successCodes": [
+              "0",
+              "3"
+            ],
+            "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+            "_result_description": {
+              "0": "skip welcome screen success",
+              "1": "skip welcome screen failure",
+              "2": "no UDID, device may not under normal mode",
+              "3": "not support android",
+              "4": "This device must be confgured using the Device Enrollment Program",
+              "5": "A cloud configuration is already present on this device",
+              "1460": "timeout",
+              "-1": "exception"
+            },
+            "gotoModule": {
+              "0": "powerDevice_Outbound",
+              "3": "powerDevice_Outbound",
+              "others": "powerDevice_Outbound"
+            }
+          },
+          {
+            "moduleUIName": "powerDevice_Outbound",
+            "moduleName": "powerDevice",
+            "description": "power device.",
+            "supportPlatforms": [
+              "ios"
+            ],
+            "input": {
+              "method": "powerOff",
+              "_method": "powerOff, reboot",
+              "retryTimeWhenFail": "1",
+              "retryInterval": "5",
+              "moduleTimeout": "180",
+              "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+            },
+            "successCodes": [
+              "0",
+              "2"
+            ],
+            "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
+            "_result_description": {
+              "0": "power off device success",
+              "1": "power off device failure",
+              "2": "not iOS device",
+              "3": "iOS device, device under recovery mode",
+              "4": "no UDID, device may not under normal mode",
+              "1460": "timeout",
+              "-1": "exception"
+            },
+            "gotoModule": {
+              "others": ""
+            }
+          }
+        ],
+        "_subModules": "A list of sub modules to be executed in this group, the execution order is from top to bottom. The sub module can be any module including Group module, but it should not be the module itself or its upstream modules, otherwise it will cause cyclic call.",
         "retryTimeWhenFail": "1",
         "retryInterval": "5",
-        "moduleTimeout": "180",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
+        "moduleTimeout": "3600",
+        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out). 3. Execution will resume after waiting for a UI response message."
+      },
+      "codesDefine": {
+        "group_success": {
+          "activeDevice_Outbound": [
+            "0",
+            "2"
+          ],
+          "skipWelcome_Outbound": [
+            "0",
+            "3"
+          ],
+          "powerDevice_Outbound": [
+            "0",
+            "2"
+          ]
+        },
+        "_comment": "will only consider the submodules that have been executed, if all of their execution results are in the defined success codes, then it is considered as group_success, otherwise it is considered as others. If a submodule does not have defined success codes, then any execution result of this submodule will be considered as success for this submodule."
       },
       "successCodes": [
-        "0"
+        "group_success"
       ],
+      "_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
       "_result_description": {
-        "0": "success, active device success",
-        "1": "failure, active device failure",
-        "2": "failure, not iOS device",
-        "3": "failure, no UDID, device may not under normal mode",
-        "4": "failure, active device failure - reason found FMI",
-        "5": "failure, active device failure - reason wrong sim card",
-        "6": "failure, active device failure - reason need to select carrier",
-        "7": "failure, active device failure - reason demo phone",
-        "8": "failure, active device failure - reason phone issue",
-        "9": "failure, active device failure - reason network issue",
-        "1460": "failure, timeout",
-        "-1": "failure, exception"
+        "1460": "timeout or reach maximum retry times",
+        "group_success": "define is codesDefine field",
+        "group_failure": "define is codesDefine field"
       },
-      "moduleUIName": "activeDevice_2",
-      "x": 837,
-      "y": 541,
       "gotoModule": {
-        "0": "skipWelcome_3",
+        "group_success": "",
         "others": ""
       },
-      "supportPlatforms": [
-        "ios"
-      ]
-    },
-    {
-      "moduleName": "skipWelcome",
-      "description": "skip welcome.",
-      "input": {
-        "skipScreen": "FFFFFFFFFFFFFFFF",
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "180",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "successCodes": [
-        "0"
-      ],
-      "_result_description": {
-        "0": "success, skip welcome screen success",
-        "1": "failure, skip welcome screen failure",
-        "2": "failure, no UDID, device may not under normal mode",
-        "3": "not support android",
-        "4": "This device must be confgured using the Device Enrollment Program",
-        "5": "A cloud configuration is already present on this device",
-        "1460": "failure, timeout",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "skipWelcome_3",
-      "x": 835,
-      "y": 613,
-      "gotoModule": {
-        "0": "powerDevice_22",
-        "others": ""
-      },
-      "supportPlatforms": [
-        "ios"
-      ]
-    },
-    {
-      "moduleName": "installRADI",
-      "description": "install radi.",
-      "input": {
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "180",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "successCodes": [
-        "0"
-      ],
-      "_result_description": {
-        "0": "success, install radi success",
-        "1": "failure, install radi failure",
-        "1460": "failure, timeout",
-        "-1": "failure, exception"
-      },
-      "moduleUIName": "installRADI_4",
-      "x": 1143,
-      "y": 423,
-      "gotoModule": {
-        "0": "condition_checkPlatform1",
-        "others": ""
-      },
-      "supportPlatforms": [
-        "ios",
-        "android"
-      ]
-    },
-    {
-      "moduleName": "queryDMServer",
-      "description": "query DM Server.",
-      "input": {
-        "queryDMKey": "",
-        "retryTimeWhenFail": "1",
-        "retryInterval": "5",
-        "moduleTimeout": "180",
-        "_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
-      },
-      "successCodes": [
-        "abcd"
-      ],
-      "_result_description": {
-        "1": "failure, not found key assignedOutput",
-        "1460": "failure, timeout",
-        "-1": "failure, exception",
-        "assignedOutput": "success, return the value of key assignedOutput from server response data"
-      },
-      "moduleUIName": "queryDMServer_5",
-      "x": 853,
-      "y": 164,
-      "gotoModule": {
-        "abcd": "readStolen_12",
-        "others": ""
-      },
-      "supportPlatforms": []
+      "x": 806,
+      "y": 723
     }
   ]
 }
