@@ -326,6 +326,78 @@ body {
     transition: background-color 0.2s ease;
 }
 
+.group-section {
+    margin-top: 12px;
+    border: 1px solid #d8d8d8;
+    border-radius: 6px;
+    padding: 10px;
+    background-color: #fafafa;
+}
+
+.group-section h4 {
+    margin: 0 0 10px 0;
+}
+
+.group-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.group-toolbar input {
+    flex: 1;
+}
+
+.group-submodule-item {
+    border: 1px solid #e2e2e2;
+    border-radius: 6px;
+    padding: 10px;
+    background: #fff;
+    margin-bottom: 10px;
+}
+
+.group-submodule-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.group-inline-fields {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.group-inline-fields input {
+    flex: 1;
+}
+
+.group-inline-actions {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.group-empty-tip {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.group-condition-card {
+    border: 1px solid #e1e1e1;
+    border-radius: 6px;
+    background: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+}
+
+.group-condition-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
 .condition-input-form button.add-condition,
 .condition-input-form button.add-group {
     background-color: #28a745;

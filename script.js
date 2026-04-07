@@ -10,6 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const zoomOutButton = document.getElementById('zoom-out');
 
     let availableModules = []; // 从 modules.json 加载的模块
+    let availableGroupModules = []; // 从 modules_group.json 加载的 Group 模板
     let flowNodes = []; // 当前画布上的模块实例
     let selectedNode = null; // 当前选中的模块
     let nextModuleId = 1; // 用于生成 moduleUIName 的唯一 ID
@@ -226,10 +227,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- 加载模块数据和参数定义 ---
     async function initializeData() {
-        console.log('Attempting to load modules.json and modules_parameter.json...');
+        console.log('Attempting to load modules.json, modules_group.json and modules_parameter.json...');
         try {
-            const [modulesResponse, paramsResponse] = await Promise.all([
+            const [modulesResponse, groupsResponse, paramsResponse] = await Promise.all([
                 fetch(`${basePath}/data/modules.json`),
+                fetch(`${basePath}/data/modules_group.json`),
                 fetch(`${basePath}/data/modules_parameter.json`)
             ]);
 
@@ -239,15 +241,27 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!paramsResponse.ok) {
                 throw new Error(`HTTP error! status: ${paramsResponse.status} for modules_parameter.json`);
             }
+            if (!groupsResponse.ok) {
+                throw new Error(`HTTP error! status: ${groupsResponse.status} for modules_group.json`);
+            }
 
             const rawModules = await modulesResponse.json();
+            const rawGroupModules = await groupsResponse.json();
             availableModules = Array.isArray(rawModules)
                 ? rawModules.filter(module => module && typeof module.moduleName === 'string' && module.moduleName.trim() !== '')
                 : [];
+            availableGroupModules = Array.isArray(rawGroupModules)
+                ? rawGroupModules.filter(module => module
+                    && module.moduleName === 'Group'
+                    && typeof module.moduleUIName === 'string'
+                    && module.moduleUIName.trim() !== '')
+                : [];
             availableModuleParameters = await paramsResponse.json();
             availableModules.forEach(ensureModuleSuccessCodes);
+            availableGroupModules.forEach(ensureModuleSuccessCodes);
 
             console.log('Loaded modules:', availableModules);
+            console.log('Loaded group modules:', availableGroupModules);
             console.log('Loaded module parameters:', availableModuleParameters);
 
             renderModulesPalette();
@@ -265,7 +279,9 @@ document.addEventListener('DOMContentLoaded', () => {
             console.warn('availableModules is empty, no modules rendered.');
             return;
         }
-        availableModules.forEach(module => {
+        const normalModules = availableModules.filter(module => module.moduleName !== 'Group');
+
+        normalModules.forEach(module => {
             const moduleDiv = document.createElement('div');
             moduleDiv.classList.add('module-item');
             moduleDiv.setAttribute('draggable', 'true');
@@ -277,7 +293,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 e.dataTransfer.setData('text/plain', module.moduleName);
             });
         });
-        console.log('Modules palette rendered with', availableModules.length, 'modules.');
+
+        if (availableGroupModules.length > 0) {
+            const groupTitle = document.createElement('h4');
+            groupTitle.textContent = 'Group 模板';
+            modulesPalette.appendChild(groupTitle);
+
+            availableGroupModules.forEach(groupModule => {
+                const groupDiv = document.createElement('div');
+                groupDiv.classList.add('module-item');
+                groupDiv.setAttribute('draggable', 'true');
+                groupDiv.dataset.moduleName = 'Group';
+                groupDiv.dataset.groupTemplate = groupModule.moduleUIName;
+                groupDiv.textContent = `Group: ${groupModule.moduleUIName}`;
+                modulesPalette.appendChild(groupDiv);
+
+                groupDiv.addEventListener('dragstart', (e) => {
+                    e.dataTransfer.setData('text/plain', `__group_template__:${groupModule.moduleUIName}`);
+                });
+            });
+        }
+
+        console.log('Modules palette rendered with', normalModules.length, 'normal modules and', availableGroupModules.length, 'group templates.');
     }
 
     // --- 流程画布拖放逻辑 ---
@@ -287,16 +324,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     flowCanvas.addEventListener('drop', (e) => {
         e.preventDefault();
-        const moduleName = e.dataTransfer.getData('text/plain');
-        if (moduleName) {
-            const moduleData = availableModules.find(m => m.moduleName === moduleName);
-            if (moduleData) {
-                // 计算放置位置相对于 flowCanvasInner 的坐标，考虑滚动
-                const flowCanvasRect = flowCanvas.getBoundingClientRect();
-                const x = (e.clientX - flowCanvasRect.left + flowCanvas.scrollLeft) / currentZoom;
-                const y = (e.clientY - flowCanvasRect.top + flowCanvas.scrollTop) / currentZoom;
-                addNodeToCanvas(moduleData, x, y);
+        const payload = e.dataTransfer.getData('text/plain');
+        if (payload) {
+            let moduleData = null;
+            if (payload.startsWith('__group_template__:')) {
+                const groupName = payload.replace('__group_template__:', '');
+                moduleData = availableGroupModules.find(m => m.moduleUIName === groupName) || null;
+            } else {
+                moduleData = availableModules.find(m => m.moduleName === payload) || null;
             }
+
+            if (!moduleData) {
+                return;
+            }
+
+            // 计算放置位置相对于 flowCanvasInner 的坐标，考虑滚动
+            const flowCanvasRect = flowCanvas.getBoundingClientRect();
+            const x = (e.clientX - flowCanvasRect.left + flowCanvas.scrollLeft) / currentZoom;
+            const y = (e.clientY - flowCanvasRect.top + flowCanvas.scrollTop) / currentZoom;
+            addNodeToCanvas(moduleData, x, y);
         }
     });
 
@@ -309,7 +355,10 @@ document.addEventListener('DOMContentLoaded', () => {
             newNode.input = {};
         }
         ensureModuleSuccessCodes(newNode);
-        newNode.moduleUIName = generateUniqueUIName(moduleData.moduleName);
+        const uiNameBase = moduleData.moduleName === 'Group' && moduleData.moduleUIName
+            ? moduleData.moduleUIName
+            : moduleData.moduleName;
+        newNode.moduleUIName = generateUniqueUIName(uiNameBase);
         newNode.id = newNode.moduleUIName; // 使用 moduleUIName 作为 DOM ID
         
         // 计算节点放置位置，考虑滚动和缩放
@@ -487,8 +536,22 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
+            if (module.moduleName === 'Group') {
+                const conditionNames = getGroupConditionNames(module);
+                const invalidCodes = strictSuccessCodes.filter(code => !conditionNames.includes(code));
+                if (invalidCodes.length > 0) {
+                    alert(`Group 模块校验失败：successCodes 包含未在 codesDefine 中定义的条件：${invalidCodes.join(', ')}`);
+                    successCodesInput.focus();
+                    return;
+                }
+            }
+
             module.successCodes = strictSuccessCodes;
             successCodesInput.value = formatSuccessCodesForDisplay(module.successCodes);
+
+            if (module.moduleName === 'Group') {
+                normalizeGroupGotoModule(module);
+            }
 
             // 重新渲染以确保所有更改都反映在 UI 和数据中
             renderFlowNodes();
@@ -501,6 +564,8 @@ document.addEventListener('DOMContentLoaded', () => {
         container.innerHTML = '';
         if (module.moduleName === 'condition') {
             renderConditionInput(module, container);
+        } else if (module.moduleName === 'Group') {
+            renderGroupInput(module, container);
         } else {
             // 查找模块的参数定义
             const moduleParamDef = availableModuleParameters.find(mp => mp.moduleName === module.moduleName);
@@ -544,6 +609,395 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         }
+    }
+
+    // --- 渲染 Group 模块的 Input 与 codesDefine 编辑器 ---
+    function renderGroupInput(module, container) {
+        if (!module.input || typeof module.input !== 'object' || Array.isArray(module.input)) {
+            module.input = {};
+        }
+
+        if (!Array.isArray(module.input.subModules)) {
+            module.input.subModules = [];
+        }
+
+        if (!module.codesDefine || typeof module.codesDefine !== 'object' || Array.isArray(module.codesDefine)) {
+            module.codesDefine = {};
+        }
+
+        const getConditionKeys = () => Object.keys(module.codesDefine).filter(key => !key.startsWith('_'));
+        const ensureConditionObject = (conditionName) => {
+            if (!module.codesDefine[conditionName] || typeof module.codesDefine[conditionName] !== 'object' || Array.isArray(module.codesDefine[conditionName])) {
+                module.codesDefine[conditionName] = {};
+            }
+        };
+
+        ['retryTimeWhenFail', 'retryInterval', 'moduleTimeout'].forEach((key) => {
+            const label = document.createElement('label');
+            label.textContent = `${key}:`;
+            container.appendChild(label);
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = module.input[key] !== undefined ? module.input[key] : '';
+            input.addEventListener('change', (e) => {
+                module.input[key] = e.target.value;
+            });
+            container.appendChild(input);
+        });
+
+        const subModulesSection = document.createElement('div');
+        subModulesSection.classList.add('group-section');
+        subModulesSection.innerHTML = '<h4>subModules</h4>';
+        container.appendChild(subModulesSection);
+
+        const subModulesToolbar = document.createElement('div');
+        subModulesToolbar.classList.add('group-toolbar');
+        subModulesSection.appendChild(subModulesToolbar);
+
+        const addSubmoduleBtn = document.createElement('button');
+        addSubmoduleBtn.type = 'button';
+        addSubmoduleBtn.textContent = '新增子模块';
+        addSubmoduleBtn.addEventListener('click', () => {
+            const fallbackTemplate = availableModules.find(m => m.moduleName !== 'Group') || availableModules[0] || {};
+            const newSubmodule = JSON.parse(JSON.stringify(fallbackTemplate));
+            if (!newSubmodule.moduleName) {
+                newSubmodule.moduleName = 'customModule';
+            }
+            if (!newSubmodule.input || typeof newSubmodule.input !== 'object' || Array.isArray(newSubmodule.input)) {
+                newSubmodule.input = {};
+            }
+            if (!Array.isArray(newSubmodule.successCodes)) {
+                newSubmodule.successCodes = ['0'];
+            }
+            if (!newSubmodule.gotoModule || typeof newSubmodule.gotoModule !== 'object' || Array.isArray(newSubmodule.gotoModule)) {
+                newSubmodule.gotoModule = { others: '' };
+            }
+            const baseSubName = `${newSubmodule.moduleName}_${module.moduleUIName}`;
+            let index = 1;
+            let uniqueSubName = `${baseSubName}_${index}`;
+            const existingNames = new Set(module.input.subModules.map(sm => sm.moduleUIName));
+            while (existingNames.has(uniqueSubName)) {
+                index += 1;
+                uniqueSubName = `${baseSubName}_${index}`;
+            }
+            newSubmodule.moduleUIName = uniqueSubName;
+            module.input.subModules.push(newSubmodule);
+            updateModuleDetailsAndRender();
+        });
+        subModulesToolbar.appendChild(addSubmoduleBtn);
+
+        if (module.input.subModules.length === 0) {
+            const emptyTip = document.createElement('div');
+            emptyTip.classList.add('group-empty-tip');
+            emptyTip.textContent = '当前没有子模块。';
+            subModulesSection.appendChild(emptyTip);
+        }
+
+        module.input.subModules.forEach((subModule, index) => {
+            if (!subModule || typeof subModule !== 'object') {
+                return;
+            }
+            const item = document.createElement('div');
+            item.classList.add('group-submodule-item');
+            subModulesSection.appendChild(item);
+
+            const title = document.createElement('div');
+            title.classList.add('group-submodule-title');
+            title.textContent = `#${index + 1} ${subModule.moduleUIName || '(未命名)'} (${subModule.moduleName || ''})`;
+            item.appendChild(title);
+
+            const line1 = document.createElement('div');
+            line1.classList.add('group-inline-fields');
+            item.appendChild(line1);
+
+            const uiNameInput = document.createElement('input');
+            uiNameInput.type = 'text';
+            uiNameInput.placeholder = 'moduleUIName';
+            uiNameInput.value = subModule.moduleUIName || '';
+            uiNameInput.addEventListener('change', (e) => {
+                const oldName = subModule.moduleUIName || '';
+                const newName = e.target.value.trim();
+                subModule.moduleUIName = newName;
+                getConditionKeys().forEach((conditionName) => {
+                    ensureConditionObject(conditionName);
+                    const conditionObj = module.codesDefine[conditionName];
+                    if (oldName && Object.prototype.hasOwnProperty.call(conditionObj, oldName)) {
+                        conditionObj[newName] = conditionObj[oldName];
+                        delete conditionObj[oldName];
+                    }
+                });
+                updateModuleDetailsAndRender();
+            });
+            line1.appendChild(uiNameInput);
+
+            const moduleNameInput = document.createElement('input');
+            moduleNameInput.type = 'text';
+            moduleNameInput.placeholder = 'moduleName';
+            moduleNameInput.value = subModule.moduleName || '';
+            moduleNameInput.addEventListener('change', (e) => {
+                subModule.moduleName = e.target.value.trim();
+            });
+            line1.appendChild(moduleNameInput);
+
+            const successCodesInput = document.createElement('input');
+            successCodesInput.type = 'text';
+            successCodesInput.placeholder = 'successCodes: 0,2';
+            successCodesInput.value = formatArrayForDisplay(Array.isArray(subModule.successCodes) ? subModule.successCodes : []);
+            successCodesInput.addEventListener('change', (e) => {
+                subModule.successCodes = parseArrayFromDisplay(e.target.value);
+                e.target.value = formatArrayForDisplay(subModule.successCodes);
+            });
+            line1.appendChild(successCodesInput);
+
+            const line2 = document.createElement('div');
+            line2.classList.add('group-inline-actions');
+            item.appendChild(line2);
+
+            const upBtn = document.createElement('button');
+            upBtn.type = 'button';
+            upBtn.textContent = '上移';
+            upBtn.disabled = index === 0;
+            upBtn.addEventListener('click', () => {
+                const temp = module.input.subModules[index - 1];
+                module.input.subModules[index - 1] = module.input.subModules[index];
+                module.input.subModules[index] = temp;
+                updateModuleDetailsAndRender();
+            });
+            line2.appendChild(upBtn);
+
+            const downBtn = document.createElement('button');
+            downBtn.type = 'button';
+            downBtn.textContent = '下移';
+            downBtn.disabled = index === module.input.subModules.length - 1;
+            downBtn.addEventListener('click', () => {
+                const temp = module.input.subModules[index + 1];
+                module.input.subModules[index + 1] = module.input.subModules[index];
+                module.input.subModules[index] = temp;
+                updateModuleDetailsAndRender();
+            });
+            line2.appendChild(downBtn);
+
+            const removeBtn = document.createElement('button');
+            removeBtn.type = 'button';
+            removeBtn.textContent = '删除';
+            removeBtn.addEventListener('click', () => {
+                const removedName = subModule.moduleUIName;
+                module.input.subModules.splice(index, 1);
+                getConditionKeys().forEach((conditionName) => {
+                    ensureConditionObject(conditionName);
+                    if (removedName) {
+                        delete module.codesDefine[conditionName][removedName];
+                    }
+                });
+                updateModuleDetailsAndRender();
+            });
+            line2.appendChild(removeBtn);
+
+            const jsonLabel = document.createElement('label');
+            jsonLabel.textContent = '子模块 JSON（可直接改参数）:';
+            item.appendChild(jsonLabel);
+
+            const jsonTextarea = document.createElement('textarea');
+            jsonTextarea.classList.add('json-input');
+            jsonTextarea.value = JSON.stringify(subModule, null, 2);
+            jsonTextarea.addEventListener('change', (e) => {
+                try {
+                    const parsed = JSON.parse(e.target.value);
+                    if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                        throw new Error('subModule must be an object');
+                    }
+                    module.input.subModules[index] = parsed;
+                    jsonTextarea.classList.remove('error');
+                    updateModuleDetailsAndRender();
+                } catch (error) {
+                    console.error('Invalid subModule JSON:', error);
+                    jsonTextarea.classList.add('error');
+                }
+            });
+            item.appendChild(jsonTextarea);
+        });
+
+        const codesDefineSection = document.createElement('div');
+        codesDefineSection.classList.add('group-section');
+        codesDefineSection.innerHTML = '<h4>codesDefine</h4>';
+        container.appendChild(codesDefineSection);
+
+        const conditionToolbar = document.createElement('div');
+        conditionToolbar.classList.add('group-toolbar');
+        codesDefineSection.appendChild(conditionToolbar);
+
+        const addConditionInput = document.createElement('input');
+        addConditionInput.type = 'text';
+        addConditionInput.placeholder = '新增条件名，如 group_success';
+        conditionToolbar.appendChild(addConditionInput);
+
+        const addConditionBtn = document.createElement('button');
+        addConditionBtn.type = 'button';
+        addConditionBtn.textContent = '新增条件';
+        addConditionBtn.addEventListener('click', () => {
+            const conditionName = addConditionInput.value.trim();
+            if (!conditionName) {
+                return;
+            }
+            ensureConditionObject(conditionName);
+            addConditionInput.value = '';
+            updateModuleDetailsAndRender();
+        });
+        conditionToolbar.appendChild(addConditionBtn);
+
+        const conditionKeys = getConditionKeys();
+        if (conditionKeys.length === 0) {
+            const emptyConditionTip = document.createElement('div');
+            emptyConditionTip.classList.add('group-empty-tip');
+            emptyConditionTip.textContent = '当前没有条件定义。';
+            codesDefineSection.appendChild(emptyConditionTip);
+        }
+
+        const subModuleNames = module.input.subModules
+            .map(sm => sm && sm.moduleUIName ? String(sm.moduleUIName).trim() : '')
+            .filter(name => name !== '');
+
+        conditionKeys.forEach((conditionName) => {
+            ensureConditionObject(conditionName);
+            const conditionObj = module.codesDefine[conditionName];
+
+            const conditionCard = document.createElement('div');
+            conditionCard.classList.add('group-condition-card');
+            codesDefineSection.appendChild(conditionCard);
+
+            const conditionHeader = document.createElement('div');
+            conditionHeader.classList.add('group-condition-header');
+            conditionCard.appendChild(conditionHeader);
+
+            const conditionTitle = document.createElement('strong');
+            conditionTitle.textContent = conditionName;
+            conditionHeader.appendChild(conditionTitle);
+
+            const removeConditionBtn = document.createElement('button');
+            removeConditionBtn.type = 'button';
+            removeConditionBtn.textContent = '删除条件';
+            removeConditionBtn.addEventListener('click', () => {
+                delete module.codesDefine[conditionName];
+                module.successCodes = module.successCodes.filter(code => code !== conditionName);
+                updateModuleDetailsAndRender();
+            });
+            conditionHeader.appendChild(removeConditionBtn);
+
+            subModuleNames.forEach((subModuleName) => {
+                if (!Array.isArray(conditionObj[subModuleName])) {
+                    conditionObj[subModuleName] = [];
+                }
+                const row = document.createElement('div');
+                row.classList.add('group-inline-fields');
+                conditionCard.appendChild(row);
+
+                const nameField = document.createElement('input');
+                nameField.type = 'text';
+                nameField.value = subModuleName;
+                nameField.disabled = true;
+                row.appendChild(nameField);
+
+                const codesField = document.createElement('input');
+                codesField.type = 'text';
+                codesField.placeholder = '允许 errorcode，逗号分隔';
+                codesField.value = formatArrayForDisplay(conditionObj[subModuleName]);
+                codesField.addEventListener('change', (e) => {
+                    conditionObj[subModuleName] = parseArrayFromDisplay(e.target.value);
+                    e.target.value = formatArrayForDisplay(conditionObj[subModuleName]);
+                });
+                row.appendChild(codesField);
+            });
+
+            const extraMappings = Object.keys(conditionObj).filter(name => !subModuleNames.includes(name));
+            if (extraMappings.length > 0) {
+                const extraTitle = document.createElement('div');
+                extraTitle.classList.add('group-empty-tip');
+                extraTitle.textContent = '额外映射（当前不在 subModules 中）';
+                conditionCard.appendChild(extraTitle);
+
+                extraMappings.forEach((mappingName) => {
+                    const row = document.createElement('div');
+                    row.classList.add('group-inline-fields');
+                    conditionCard.appendChild(row);
+
+                    const mappingNameInput = document.createElement('input');
+                    mappingNameInput.type = 'text';
+                    mappingNameInput.value = mappingName;
+                    mappingNameInput.disabled = true;
+                    row.appendChild(mappingNameInput);
+
+                    const codesField = document.createElement('input');
+                    codesField.type = 'text';
+                    codesField.value = formatArrayForDisplay(Array.isArray(conditionObj[mappingName]) ? conditionObj[mappingName] : []);
+                    codesField.addEventListener('change', (e) => {
+                        conditionObj[mappingName] = parseArrayFromDisplay(e.target.value);
+                        e.target.value = formatArrayForDisplay(conditionObj[mappingName]);
+                    });
+                    row.appendChild(codesField);
+
+                    const removeMappingBtn = document.createElement('button');
+                    removeMappingBtn.type = 'button';
+                    removeMappingBtn.textContent = '删除映射';
+                    removeMappingBtn.addEventListener('click', () => {
+                        delete conditionObj[mappingName];
+                        updateModuleDetailsAndRender();
+                    });
+                    row.appendChild(removeMappingBtn);
+                });
+            }
+        });
+
+        const rawJsonSection = document.createElement('div');
+        rawJsonSection.classList.add('group-section');
+        rawJsonSection.innerHTML = '<h4>高级 JSON 编辑</h4>';
+        container.appendChild(rawJsonSection);
+
+        const subModulesJsonLabel = document.createElement('label');
+        subModulesJsonLabel.textContent = 'subModules (JSON Array):';
+        rawJsonSection.appendChild(subModulesJsonLabel);
+
+        const subModulesJsonInput = document.createElement('textarea');
+        subModulesJsonInput.classList.add('json-input');
+        subModulesJsonInput.value = JSON.stringify(module.input.subModules, null, 2);
+        subModulesJsonInput.addEventListener('change', (e) => {
+            try {
+                const parsed = JSON.parse(e.target.value);
+                if (!Array.isArray(parsed)) {
+                    throw new Error('subModules must be an array');
+                }
+                module.input.subModules = parsed;
+                subModulesJsonInput.classList.remove('error');
+                updateModuleDetailsAndRender();
+            } catch (error) {
+                console.error('Invalid subModules JSON:', error);
+                subModulesJsonInput.classList.add('error');
+            }
+        });
+        rawJsonSection.appendChild(subModulesJsonInput);
+
+        const codesDefineJsonLabel = document.createElement('label');
+        codesDefineJsonLabel.textContent = 'codesDefine (JSON Object):';
+        rawJsonSection.appendChild(codesDefineJsonLabel);
+
+        const codesDefineJsonInput = document.createElement('textarea');
+        codesDefineJsonInput.classList.add('json-input');
+        codesDefineJsonInput.value = JSON.stringify(module.codesDefine, null, 2);
+        codesDefineJsonInput.addEventListener('change', (e) => {
+            try {
+                const parsed = JSON.parse(e.target.value);
+                if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+                    throw new Error('codesDefine must be an object');
+                }
+                module.codesDefine = parsed;
+                codesDefineJsonInput.classList.remove('error');
+                updateModuleDetailsAndRender();
+            } catch (error) {
+                console.error('Invalid codesDefine JSON:', error);
+                codesDefineJsonInput.classList.add('error');
+            }
+        });
+        rawJsonSection.appendChild(codesDefineJsonInput);
     }
 
     // --- 递归渲染参数输入 UI ---
@@ -896,6 +1350,37 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
         module.successCodes = parseSuccessCodesFromDisplay(module.successCodes, module.moduleName);
+    }
+
+    function getGroupConditionNames(module) {
+        if (!module || module.moduleName !== 'Group' || !module.codesDefine || typeof module.codesDefine !== 'object') {
+            return [];
+        }
+        return Object.keys(module.codesDefine).filter(key => !String(key).startsWith('_'));
+    }
+
+    function normalizeGroupGotoModule(module) {
+        if (!module || module.moduleName !== 'Group') {
+            return;
+        }
+
+        if (!module.gotoModule || typeof module.gotoModule !== 'object' || Array.isArray(module.gotoModule)) {
+            module.gotoModule = {};
+        }
+
+        const successCodes = Array.isArray(module.successCodes) ? module.successCodes : [];
+        const normalizedGoto = {};
+
+        successCodes.forEach((code) => {
+            const normalizedCode = String(code).trim();
+            if (!normalizedCode || normalizedCode === 'others') {
+                return;
+            }
+            normalizedGoto[normalizedCode] = module.gotoModule[normalizedCode] || '';
+        });
+
+        normalizedGoto.others = module.gotoModule.others || '';
+        module.gotoModule = normalizedGoto;
     }
 
 
