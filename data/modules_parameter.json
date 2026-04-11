@@ -123,6 +123,25 @@
 		"moduleName": "fastClean",
 		"description": "fastClean Device.",
 		"input": {
+			"howManyLatestVersionSupportFastClear": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "all",
+						"label": "all"
+					},
+					{
+						"value": "1",
+						"label": "1"
+					},
+					{
+						"value": "2",
+						"label": "2"
+					}
+				],
+				"default": "all",
+				"_comment": "all: Indicates any version. 1: Indicates only the latest version. 2: Indicates the latest version and the previous latest version."
+			},
 			"retryTimeWhenFail": {
 				"type": "Text",
 				"default": "1"

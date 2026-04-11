@@ -714,9 +714,9 @@
 			"actionKey": "action_remove_simcard",
 			"_actionKey": "action_remove_simcard, action_remove_sdcard, action_remove_esim, action_close_tray",
 			"stopAndWaitUserResponse": "true",
-			"retryTimeWhenFail": "1",
+			"retryTimeWhenFail": "-1",
 			"retryInterval": "5",
-			"moduleTimeout": "600",
+			"moduleTimeout": "-1",
 			"_comment": "1. Timeout and Retry: Whichever of the two triggers first determines which mechanism is ultimately applied. 2. A value of -1 indicates \"indefinite\" (i.e., never times out)."
 		},
 		"successCodes": [
