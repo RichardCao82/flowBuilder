@@ -38,7 +38,7 @@
 	{
 		"moduleName": "manualInput",
 		"description": "A UI window pops up, prompting the user to enter data.",
-		"estimatedTime": "60",
+		"estimatedTime": "120",
 		"_estimatedTime": "It depends on the user's response time and the configuration of the input fields.",
 		"supportPlatforms": [],
 		"input": {
@@ -186,7 +186,7 @@
 	{
 		"moduleName": "fastClean",
 		"description": "fastClean Device.",
-		"estimatedTime": "100",
+		"estimatedTime": "300",
 		"_estimatedTime": "The fastClean operation should be completed within 5 seconds; the remaining time is allocated for waiting for the device to restart and be detected.",
 		"supportPlatforms": [
 			"ios"
@@ -216,7 +216,7 @@
 	{
 		"moduleName": "readFMI",
 		"description": "Check if the equipment is lock by FMI.",
-		"estimatedTime": "10",
+		"estimatedTime": "30",
 		"_estimatedTime": "In most cases, using device-side methods takes less than 10 seconds, whereas the time required to query third-party services depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios"
@@ -247,7 +247,7 @@
 	{
 		"moduleName": "readDEP",
 		"description": "Check if the equipment is lock by DEP.",
-		"estimatedTime": "150",
+		"estimatedTime": "300",
 		"_estimatedTime": "The specific duration depends on the device's status and the detection method used. In a worst-case scenario—specifically, when the device first requires a \"FastClean\" operation—the entire process may take over 150 seconds, as this period may involve waiting for the device to restart and be re-recognized by the system.",
 		"supportPlatforms": [
 			"ios"
@@ -388,7 +388,7 @@
 	{
 		"moduleName": "checkBatteryHealth",
 		"description": "Check the health of the device's battery.",
-		"estimatedTime": "10",
+		"estimatedTime": "60",
 		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios",
@@ -445,7 +445,7 @@
 	{
 		"moduleName": "queryDeviceFinancialStatus",
 		"description": "Query server for device financial status.",
-		"estimatedTime": "10",
+		"estimatedTime": "20",
 		"_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios",
@@ -477,7 +477,7 @@
 	{
 		"moduleName": "readSIMLock",
 		"description": "Query server for SIM LOCK info.",
-		"estimatedTime": "10",
+		"estimatedTime": "20",
 		"_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios"
@@ -509,7 +509,7 @@
 	{
 		"moduleName": "readStolen",
 		"description": "Query server for stolen info.",
-		"estimatedTime": "10",
+		"estimatedTime": "20",
 		"_estimatedTime": "the time required to query third-party services depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios",
@@ -553,7 +553,7 @@
 			"appComeFrom": "FDServer",
 			"_appComeFrom": "FDServer, ModuleParam",
 			"appProfileComeFrom": "MakeModel",
-			"_appProfileComeFrom": "MakeModel, ModuleParam",
+			"_appProfileComeFrom": "MakeModel, ModuleParam. When set MakeModel, the profile file will be retrieved from %apsthome%/ClientProfileSyncStatus.json.",
 			"iosApp": "",
 			"ardApp": "",
 			"iosProfile": "",
@@ -592,7 +592,7 @@
 	{
 		"moduleName": "installWifiProfile",
 		"description": "install wifi prfile feature.",
-		"estimatedTime": "10",
+		"estimatedTime": "20",
 		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios",
@@ -627,7 +627,7 @@
 	{
 		"moduleName": "installApps",
 		"description": "install apps feature.",
-		"estimatedTime": "10",
+		"estimatedTime": "20",
 		"_estimatedTime": "",
 		"supportPlatforms": [
 			"ios",
@@ -662,7 +662,7 @@
 	{
 		"moduleName": "runExes",
 		"description": "run exe feature.",
-		"estimatedTime": "10",
+		"estimatedTime": "30",
 		"_estimatedTime": "It depends on the execution time of the EXE.",
 		"supportPlatforms": [],
 		"input": {
@@ -839,7 +839,7 @@
 	{
 		"moduleName": "activeDevice",
 		"description": "active device.",
-		"estimatedTime": "10",
+		"estimatedTime": "30",
 		"_estimatedTime": "Depends on network conditions and server response speed.",
 		"supportPlatforms": [
 			"ios"
@@ -902,11 +902,12 @@
 	{
 		"moduleName": "queryDMServer",
 		"description": "query DM Server.",
-		"estimatedTime": "10",
+		"estimatedTime": "20",
 		"_estimatedTime": "Depends on network conditions and server response speed.",
 		"supportPlatforms": [],
 		"input": {
-			"queryDMKey": "",
+			"queryDMActionKey": "",
+			"queryDMProfile": "",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "180",

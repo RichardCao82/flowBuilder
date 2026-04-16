@@ -877,16 +877,31 @@
 		"moduleName": "queryDMServer",
 		"description": "query DM Server.",
 		"input": {
-			"queryDMKey": {
+			"queryDMActionKey": {
 				"type": "Select",
 				"option": [
 					{
-						"value": "111",
-						"label": "xyz"
+						"value": "GetGrade",
+						"label": "GetGrade"
+					},
+					{
+						"value": "test",
+						"label": "testAction"
+					}
+				],
+				"default": "111",
+				"_comment": "Jet will provide the full list"
+			},
+			"queryDMProfile": {
+				"type": "Select",
+				"option": [
+					{
+						"value": "DM_H",
+						"label": "DM_H"
 					},
 					{
 						"value": "222",
-						"label": "qwe"
+						"label": "test Profile"
 					}
 				],
 				"default": "111",
