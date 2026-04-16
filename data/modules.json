@@ -906,7 +906,7 @@
 		"_estimatedTime": "Depends on network conditions and server response speed.",
 		"supportPlatforms": [],
 		"input": {
-			"queryDMActionKey": "",
+			"queryDMAction": "",
 			"queryDMProfile": "",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
