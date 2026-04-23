@@ -600,10 +600,8 @@
 		],
 		"input": {
 			"wifiProfileFiles": [
-				"%apsthome%/3Party/wifi/RADI_UFO_8.zip",
-				"%apsthome%/3Party/wifi/RADI_UFO_10.zip"
 			],
-			"wifiProfileFolder": "",
+			"wifiProfileFolder": "%apsthome%/3Party/wifi",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "240",
@@ -878,7 +876,7 @@
 			"ios"
 		],
 		"input": {
-			"skipScreen": "FFFFFFFFFFFFFFFF",
+			"skipScreen": "7FFFFFFFFFFFFFFF",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "180",

@@ -519,7 +519,7 @@
 			},
 			"wifiProfileFolder": {
 				"type": "Text",
-				"default": ""
+				"default": "%apsthome%/3Party/wifi"
 			},
 			"retryTimeWhenFail": {
 				"type": "Text",
@@ -857,7 +857,7 @@
 		"input": {
 			"skipScreen": {
 				"type": "Text",
-				"default": "FFFFFFFFFFFFFFFF"
+				"default": "7FFFFFFFFFFFFFFF"
 			},
 			"retryTimeWhenFail": {
 				"type": "Text",
