@@ -8,6 +8,7 @@
 		"_comment_flow_2": "A \"gotoModule\" field must be created for each module in the flow, and this field must contain a field named \"others\"."
 	},
 	{
+		"moduleDisplayName": "",
 		"moduleName": "Group",
 		"description": "this is shell module for grouping other modules, it has no actual execution logic.",
 		"estimatedTime": "0",
@@ -36,6 +37,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Manual Input",
 		"moduleName": "manualInput",
 		"description": "A UI window pops up, prompting the user to enter data.",
 		"estimatedTime": "120",
@@ -64,6 +66,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Battery Charge Level",
 		"moduleName": "checkBatteryLevel",
 		"estimatedTime": "60",
 		"_estimatedTime": "This depends on the device's current battery level, the target battery level set in the input, and the device's charging speed.",
@@ -94,6 +97,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "",
 		"moduleName": "condition",
 		"description": "Read data from Redis based on the input content, and subsequently jump to the target module to resume execution based on the input conditions.",
 		"estimatedTime": "1",
@@ -184,6 +188,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Factory Reset",
 		"moduleName": "fastClean",
 		"description": "fastClean Device.",
 		"estimatedTime": "300",
@@ -215,6 +220,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "FMI",
 		"moduleName": "readFMI",
 		"description": "Check if the equipment is lock by FMI.",
 		"estimatedTime": "30",
@@ -246,6 +252,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "MDM",
 		"moduleName": "readDEP",
 		"description": "Check if the equipment is lock by DEP.",
 		"estimatedTime": "300",
@@ -274,6 +281,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Apple Part Check",
 		"moduleName": "readComponents",
 		"description": "Read the iOS components info",
 		"estimatedTime": "240",
@@ -306,6 +314,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "FMM, FRP, KME",
 		"moduleName": "readFMMFRPKME",
 		"description": "Check if the equipment is LOCKED by FMM,FRP,KME.",
 		"estimatedTime": "120",
@@ -358,6 +367,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Data Check",
 		"moduleName": "dataCheck",
 		"description": "Check if the equipment is clean.",
 		"estimatedTime": "10",
@@ -387,6 +397,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Battery Check",
 		"moduleName": "checkBatteryHealth",
 		"description": "Check the health of the device's battery.",
 		"estimatedTime": "60",
@@ -444,6 +455,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Financial Encumbrance",
 		"moduleName": "queryDeviceFinancialStatus",
 		"description": "Query server for device financial status.",
 		"estimatedTime": "20",
@@ -476,6 +488,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "SIM Lock",
 		"moduleName": "readSIMLock",
 		"description": "Query server for SIM LOCK info.",
 		"estimatedTime": "20",
@@ -508,6 +521,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Lost & Stolen",
 		"moduleName": "readStolen",
 		"description": "Query server for stolen info.",
 		"estimatedTime": "20",
@@ -541,6 +555,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Function Test",
 		"moduleName": "functionTest",
 		"description": "functionTest feature.",
 		"estimatedTime": "180",
@@ -591,6 +606,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Load WiFi",
 		"moduleName": "installWifiProfile",
 		"description": "install wifi prfile feature.",
 		"estimatedTime": "20",
@@ -600,8 +616,7 @@
 			"android"
 		],
 		"input": {
-			"wifiProfileFiles": [
-			],
+			"wifiProfileFiles": [],
 			"wifiProfileFolder": "%apsthome%/3Party/wifi",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
@@ -624,6 +639,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Custom App",
 		"moduleName": "installApps",
 		"description": "install apps feature.",
 		"estimatedTime": "20",
@@ -664,6 +680,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "",
 		"moduleName": "runExes",
 		"description": "run exe feature.",
 		"estimatedTime": "30",
@@ -709,6 +726,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "",
 		"moduleName": "userAction",
 		"description": "ask user do something.",
 		"estimatedTime": "30",
@@ -737,6 +755,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "",
 		"moduleName": "deepClean",
 		"description": "deep clean device.",
 		"estimatedTime": "3600",
@@ -766,6 +785,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Flash",
 		"moduleName": "refurbish",
 		"description": "refurbish device.",
 		"estimatedTime": "600",
@@ -811,6 +831,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Power device off",
 		"moduleName": "powerDevice",
 		"description": "power device.",
 		"estimatedTime": "3",
@@ -841,6 +862,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Activate",
 		"moduleName": "activeDevice",
 		"description": "active device.",
 		"estimatedTime": "30",
@@ -874,6 +896,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Bypass Welcome",
 		"moduleName": "skipWelcome",
 		"description": "skip welcome.",
 		"estimatedTime": "10",
@@ -904,6 +927,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "getBatteryHealth, getGrade",
 		"moduleName": "queryDMServer",
 		"description": "query DM Server.",
 		"estimatedTime": "20",
@@ -928,6 +952,7 @@
 		}
 	},
 	{
+		"moduleDisplayName": "Load SMART Test App",
 		"moduleName": "installRADI",
 		"description": "install radi.",
 		"estimatedTime": "30",
