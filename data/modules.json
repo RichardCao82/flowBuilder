@@ -189,7 +189,8 @@
 		"estimatedTime": "300",
 		"_estimatedTime": "The fastClean operation should be completed within 5 seconds; the remaining time is allocated for waiting for the device to restart and be detected.",
 		"supportPlatforms": [
-			"ios"
+			"ios",
+			"android"
 		],
 		"input": {
 			"howManyLatestVersionSupportFastClear": "all",
@@ -632,11 +633,16 @@
 			"android"
 		],
 		"input": {
-			"appsFiles": [
-				"%apsthome%/3Party/apps/ios/radi.ipa",
-				"%apsthome%/3Party/apps/ios/abc.apk"
+			"iosAppsFiles": [
+				"%apsthome%/3Party/apps/ios/radi_1.ipa",
+				"%apsthome%/3Party/apps/ios/radi_2.ipa"
 			],
-			"appsFolder": "",
+			"ardAppsFiles": [
+				"%apsthome%/3Party/apps/android/radi_3.apk",
+				"%apsthome%/3Party/apps/android/radi_4.apk"
+			],
+			"iosAppsFolder": "",
+			"ardAppsFolder": "",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "240",
