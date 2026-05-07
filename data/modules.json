@@ -936,6 +936,7 @@
 		"input": {
 			"queryDMAction": "",
 			"queryDMProfile": "",
+			"saveRedisKey": "",
 			"retryTimeWhenFail": "1",
 			"retryInterval": "5",
 			"moduleTimeout": "180",
