@@ -586,7 +586,7 @@
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "exception",
-			"0": "install function test and read out function test rsult success",
+			"0": "install function test and read out function test rsult success, ft result is success",
 			"1": "install function test failure",
 			"2": "iOS device, device under recovery mode",
 			"3": "iOS device, read version or active info fail",
@@ -602,6 +602,7 @@
 			"13": "no UDID, device may not under normal mode",
 			"14": "no SN for android device",
 			"15": "device disconnected",
+			"16": "install function test and read out function test rsult success, ft result is failure",
 			"1460": "timeout"
 		}
 	},
