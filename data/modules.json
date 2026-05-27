@@ -484,6 +484,7 @@
 			"1": "query get info failure",
 			"2": "no IMEI info for query 3th party service",
 			"3": "unknow check method",
+			"4": "wifiOnly device, no IMEI info for query 3th party service",
 			"1460": "timeout"
 		}
 	},
@@ -551,6 +552,7 @@
 			"2": "read stolen info Unknown",
 			"3": "no IMEI info for query 3th party service",
 			"4": "unknow check method",
+			"5": "wifiOnly device, no IMEI info for query 3th party service",
 			"1460": "timeout"
 		}
 	},
@@ -586,7 +588,7 @@
 		"_successCodes": "An empty list indicates that all error codes are treated as successful execution of this module.",
 		"_result_description": {
 			"-1": "exception",
-			"0": "install function test and read out function test rsult success, ft result is success",
+			"0": "install function test and read out function test result success, ft result is success",
 			"1": "install function test failure",
 			"2": "iOS device, device under recovery mode",
 			"3": "iOS device, read version or active info fail",
@@ -602,7 +604,7 @@
 			"13": "no UDID, device may not under normal mode",
 			"14": "no SN for android device",
 			"15": "device disconnected",
-			"16": "install function test and read out function test rsult success, ft result is failure",
+			"16": "install function test and read out function test result success, ft result is failure",
 			"1460": "timeout"
 		}
 	},
