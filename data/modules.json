@@ -605,6 +605,7 @@
 			"14": "no SN for android device",
 			"15": "device disconnected",
 			"16": "install function test and read out function test result success, ft result is failure",
+			"17": "ask user open normal adb failure",
 			"1460": "timeout"
 		}
 	},
@@ -638,6 +639,7 @@
 			"3": "merge wifi profile to 1 file failure",
 			"4": "no UDID, device may not under normal mode",
 			"5": "no SN for android device",
+			"6": "ask user open normal adb failure",
 			"1460": "timeout"
 		}
 	},
@@ -679,6 +681,7 @@
 			"3": "no UDID, device may not under normal mode",
 			"4": "no SN for android device",
 			"5": "get permission for fdbox apk failure",
+			"6": "ask user open normal adb failure",
 			"1460": "timeout"
 		}
 	},
@@ -725,6 +728,7 @@
 			"0": "run exes success",
 			"1": "run exes failure",
 			"2": "some exes not exist",
+			"3": "ask user open normal adb failure",
 			"1460": "timeout"
 		}
 	},
@@ -979,6 +983,10 @@
 			"-1": "exception",
 			"0": "install radi success",
 			"1": "install radi failure",
+			"2": "failure, no UDID, device may not under normal mode",
+			"3": "failure, not get SN of android device",
+            "4": "failure, exe or profile is not exist",
+            "5": "ask user open normal adb failure",
 			"1460": "timeout"
 		}
 	}
