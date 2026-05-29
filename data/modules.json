@@ -355,7 +355,7 @@
 			"18": "FMM is UnLocked, FRP is Unknown, KME is UnLocked",
 			"19": "FMM is UnLocked, FRP is Unknown, KME is Unknown",
 			"20": "FMM is Unknown, FRP is Locked, KME is Locked",
-			"11": "FMM is Unknown, FRP is Locked, KME is UnLocked",
+			"21": "FMM is Unknown, FRP is Locked, KME is UnLocked",
 			"22": "FMM is Unknown, FRP is Locked, KME is Unknown",
 			"23": "FMM is Unknown, FRP is UnLocked, KME is Locked",
 			"24": "FMM is Unknown, FRP is UnLocked, KME is UnLocked",
